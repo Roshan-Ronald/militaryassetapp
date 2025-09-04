@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MagnifyingGlassIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, FunnelIcon , PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const PAGE_SIZE = 10;
 const BASES = ['Base Alpha', 'Base Bravo'];
@@ -13,7 +13,7 @@ const initialPurchases = [
 
 function getToday() {
   const d = new Date();
-  return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
 }
 
 function parseDate(input) {
@@ -69,7 +69,7 @@ export default function PurchasesPage() {
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function handleFilterChange(e) {
     const { name, value } = e.target;
@@ -100,8 +100,8 @@ export default function PurchasesPage() {
     const purchase = { ...newPurchase, totalCost: Number(newPurchase.quantity) * Number(newPurchase.unitCost) };
     setPurchases([purchase, ...purchases]);
     setNewPurchase({
-      asset: "", assetType: "", base: "", supplier: "", quantity:1,
-      unitCost:0, totalCost:0, status:"", date:getToday(), invoice:"", notes:""
+      asset: "", assetType: "", base: "", supplier: "", quantity: 1,
+      unitCost: 0, totalCost: 0, status: "", date: getToday(), invoice: "", notes: ""
     });
     setShowNew(false);
     setPage(1);
@@ -112,10 +112,14 @@ export default function PurchasesPage() {
       <div className="flex justify-between items-center mb-6 flex-wrap gap-6">
         <h1 className="text-3xl font-bold text-[#181C32] min-w-[200px] flex-grow">Purchases</h1>
         <div className="flex items-center gap-3 flex-wrap">
-          <button onClick={() => setShowFilter(!showFilter)} className="flex items-center gap-1 border border-[#DDD] px-4 py-2 rounded-lg font-semibold text-[#29376F] text-sm cursor-pointer shadow-sm hover:border-gray-400 transition">
-            <MagnifyingGlassIcon className="w-4 h-4 text-[#29376F]" />
+          <button
+            onClick={() => setShowFilter(v => !v)}
+            className={`flex items-center  gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 focus:outline-none ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
+          >
+            <FunnelIcon className="w-5 h-5" />
             Filters
           </button>
+
           <button onClick={() => setShowNew(true)} className="flex items-center gap-1 bg-[#198CF7] text-white px-5 py-2 rounded-lg font-bold shadow-sm hover:bg-[#136BFE] transition cursor-pointer">
             <PlusIcon className="w-4 h-4" />
             Add Purchase
@@ -198,13 +202,13 @@ export default function PurchasesPage() {
 
         <div className="flex flex-wrap justify-end items-center gap-4 p-4 text-sm">
           <span>
-            Showing {(page-1)*PAGE_SIZE+1} to {Math.min(page*PAGE_SIZE, filtered.length)} of {filtered.length} results
+            Showing {(page - 1) * PAGE_SIZE + 1} to {Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} results
           </span>
-          <button disabled={page===1} onClick={() => setPage(page-1)} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page===1 ? "border-gray-300 text-gray-400 cursor-not-allowed" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}>&lt;</button>
+          <button disabled={page === 1} onClick={() => setPage(page - 1)} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page === 1 ? "border-gray-300 text-gray-400 cursor-not-allowed" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}>&lt;</button>
           {[...Array(totalPages)].map((_, idx) => (
-            <button key={idx} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page===idx+1 ? "bg-blue-600 text-white border-blue-600" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`} onClick={() => setPage(idx+1)}>{idx+1}</button>
+            <button key={idx} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page === idx + 1 ? "bg-blue-600 text-white border-blue-600" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`} onClick={() => setPage(idx + 1)}>{idx + 1}</button>
           ))}
-          <button disabled={page===totalPages} onClick={() => setPage(page+1)} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page===totalPages ? "border-gray-300 text-gray-400 cursor-not-allowed" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}>&gt;</button>
+          <button disabled={page === totalPages} onClick={() => setPage(page + 1)} className={`min-w-[30px] min-h-[30px] rounded text-sm font-semibold border ${page === totalPages ? "border-gray-300 text-gray-400 cursor-not-allowed" : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"}`}>&gt;</button>
         </div>
       </div>
 

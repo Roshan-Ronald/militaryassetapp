@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MagnifyingGlassIcon, PlusIcon, ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const LOCAL_KEY = "assetsData";
 const PAGE_SIZE = 10;
@@ -332,8 +332,11 @@ const AssetManager = () => {
       <div className="flex justify-between items-center mb-6 flex-wrap gap-6">
         <h1 className="text-3xl font-bold text-[#181C32] min-w-[200px] flex-grow">Assets</h1>
         <div className="flex items-center gap-3 flex-wrap">
-          <button onClick={() => setShowFilter(true)} className="flex items-center gap-1 border border-[#DDD] px-4 py-2 rounded-lg font-semibold text-[#29376F] text-sm cursor-pointer shadow-sm hover:border-gray-400 transition">
-            <MagnifyingGlassIcon className="w-4 h-4 text-[#29376F]" />
+          <button
+            onClick={() => setShowFilter(v => !v)}
+            className={`flex items-center gap-1 px-4 py-2 cursor-pointer  rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 focus:outline-none ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
+          >
+            <FunnelIcon className="w-5 h-5" />
             Filters
           </button>
           <button onClick={() => setShowAddPage(true)} className="flex items-center gap-1 bg-[#198CF7] text-white px-5 py-2 rounded-lg font-bold shadow-sm hover:bg-[#136BFE] transition cursor-pointer">

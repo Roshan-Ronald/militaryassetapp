@@ -7,6 +7,9 @@ import TopBar from './Components/TopBar.jsx';
 import AssetManager from './Pages/AssetManager.jsx';
 import Transfers from './Pages/Transfers.jsx';
 import PurchasesPage from './Pages/PurchasesPage.jsx';
+import Assignments from './Pages/AssignmentsPage.jsx';
+import ExpendituresPage from './Pages/ExpendituresPage.jsx';
+import UsersPage from './Pages/UsersPage.jsx';
 
 function App() {
   const location = useLocation();
@@ -36,6 +39,9 @@ function App() {
             <Route path="/assets" element={isAuthenticated ? <AssetManager /> : <Navigate to="/" />} />
             <Route path="/transfers" element={isAuthenticated ? <Transfers /> : <Navigate to="/" />} />
             <Route path="/purchases" element={isAuthenticated ? <PurchasesPage /> : <Navigate to="/" />} />
+            <Route path="/assignments" element={isAuthenticated ? <Assignments /> : <Navigate to="/" />} />
+            <Route path="/expenditures" element={isAuthenticated ? <ExpendituresPage /> : <Navigate to="/" />} />
+            <Route path="/users" element={isAuthenticated ? <UsersPage /> : <Navigate to="/" />} />
             <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/"} />} />
           </Routes>
         </main>

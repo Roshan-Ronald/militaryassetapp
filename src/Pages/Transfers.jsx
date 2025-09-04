@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from "react";
+import { FunnelIcon } from '@heroicons/react/24/outline';
 
 const baseOptions = ["Base Alpha", "Base Bravo", "Base Charlie"];
 const PAGE_SIZE = 10;
@@ -100,10 +100,10 @@ export default function TransferManager() {
                 <h1 className="text-3xl font-bold text-[#181C32] min-w-[200px] flex-grow">Transfers</h1>
                 <div className="flex flex-wrap gap-3 items-center">
                     <button
-                        onClick={() => setShowFilters(!showFilters)}
-                        className="flex items-center gap-1 cursor-pointer border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                        onClick={() => setShowFilters(v => !v)}
+                        className={`flex items-center cursor-pointer gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 focus:outline-none ${showFilters ? 'ring-2 ring-blue-200' : ''}`}
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path d="M21 21l-6-6M3 10a7 7 0 0114 0 7 7 0 01-14 0z" /></svg>
+                        <FunnelIcon className="w-5 h-5" />
                         Filters
                     </button>
                     <button
@@ -268,8 +268,8 @@ export default function TransferManager() {
                                     <td className="px-4 py-4 border-r border-gray-300 text-[#198CF7] font-semibold underline cursor-pointer whitespace-nowrap">{tr.asset}</td>
                                     <td className="px-4 py-4 border-r border-gray-300 whitespace-nowrap">{tr.from}</td>
                                     <td className="px-4 py-4 border-r border-gray-300 whitespace-nowrap">{tr.to}</td>
-                                    <td className="px-4 py-4  border-r border-gray-300 whitespace-nowrap">{tr.quantity}</td>
-                                    <td className="px-4 py-4  border-r border-gray-300 whitespace-nowrap">
+                                    <td className="px-4 py-4 border-r border-gray-300 whitespace-nowrap">{tr.quantity}</td>
+                                    <td className="px-4 py-4 border-r border-gray-300 whitespace-nowrap">
                                         <span className="inline-block min-w-[60px] rounded-full bg-[#E3FBCF] text-[#259C1B] font-semibold text-xs text-center px-3 py-1">
                                             {tr.status}
                                         </span>

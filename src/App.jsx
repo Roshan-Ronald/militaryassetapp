@@ -10,6 +10,7 @@ import PurchasesPage from './Pages/PurchasesPage.jsx';
 import Assignments from './Pages/AssignmentsPage.jsx';
 import ExpendituresPage from './Pages/ExpendituresPage.jsx';
 import UsersPage from './Pages/UsersPage.jsx';
+import Settings from './Pages/Settings.jsx';
 
 function App() {
   const location = useLocation();
@@ -32,7 +33,7 @@ function App() {
           </div>
         )}
 
-        <main className={`pt-16 px-6 overflow-auto ${isLoginPage ? "pt-0" : ""}`}>
+        <main className={`overflow-auto ${!isLoginPage ? "pt-16 px-6" : ""}`}>
           <Routes>
             <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
@@ -42,6 +43,7 @@ function App() {
             <Route path="/assignments" element={isAuthenticated ? <Assignments /> : <Navigate to="/" />} />
             <Route path="/expenditures" element={isAuthenticated ? <ExpendituresPage /> : <Navigate to="/" />} />
             <Route path="/users" element={isAuthenticated ? <UsersPage /> : <Navigate to="/" />} />
+            <Route path="/settings" element={isAuthenticated ? <Settings /> : <Navigate to="/" />} />
             <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/"} />} />
           </Routes>
         </main>

@@ -27,7 +27,16 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-40">        <div className="text-2xl font-bold">Military Asset Management</div>
+      <div className="bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-40">
+        <div
+          className="text-2xl font-bold cursor-pointer"
+          onClick={() => navigate('/home')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/home'); }}
+        >
+          Military Asset Management
+        </div>
         <button
           className="focus:outline-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}

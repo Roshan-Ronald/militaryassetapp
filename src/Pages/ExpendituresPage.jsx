@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FunnelIcon, PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const BASES = ["All Bases", "Base Alpha", "Base Bravo"];
 const TYPES = ["All Types", "Ammunition", "Vehicle"];
 const REASONS = ["All Reasons", "Training", "Operation", "Routine", "Other"];
 const PAGE_SIZE = 10;
+
 const initialRows = [
   {
     asset: "5.56mm Ammunition",
@@ -25,7 +26,7 @@ const initialRows = [
 
 function getTodayDMY() {
   const d = new Date();
-  return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
 }
 
 export default function ExpendituresPage() {
@@ -55,6 +56,17 @@ export default function ExpendituresPage() {
   });
   const [errors, setErrors] = useState({});
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const savedRows = localStorage.getItem("expenditures");
+    if (savedRows) {
+      setRows(JSON.parse(savedRows));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("expenditures", JSON.stringify(rows));
+  }, [rows]);
 
   function parseUserDate(txt) {
     if (!txt) return null;
@@ -99,7 +111,7 @@ export default function ExpendituresPage() {
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
-  const paginatedRows = filteredRows.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const paginatedRows = filteredRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function handleApply() {
     setShowFilter(false);
@@ -121,7 +133,7 @@ export default function ExpendituresPage() {
   function validateFormData(f) {
     const e = {};
     if (!f.asset) e.asset = "Select an asset";
-    if (!f.assetType) e.assetType = "Select type";
+    if (!f.assetType) e.assetType = "Select asset type";
     if (!f.base) e.base = "Select base";
     if (!f.reason) e.reason = "Select reason";
     if (!f.quantity || Number(f.quantity) < 1) e.quantity = "Enter quantity";
@@ -148,11 +160,11 @@ export default function ExpendituresPage() {
           rank: form.expendedByRank,
           id: form.expendedById
         },
-        date: form.date.split("-").map((part,i)=>{
-          if(i===1) {
+        date: form.date.split("-").map((part, i) => {
+          if (i === 1) {
             return [
               "",
-              "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
+              "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ][Number(part)].toString();
           }
           return part;
@@ -286,8 +298,21 @@ export default function ExpendituresPage() {
                   value={form.asset}
                   onChange={e => setForm(f => ({ ...f, asset: e.target.value }))}
                   required
-                  />
+                />
                 {errors.asset && <p className="text-sm text-red-600 mt-1">{errors.asset}</p>}
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold text-gray-700">Asset Type</label>
+                <select
+                  className="border rounded w-full px-4 py-3"
+                  value={form.assetType}
+                  onChange={e => setForm(f => ({ ...f, assetType: e.target.value }))}
+                  required
+                >
+                  <option value="">Select an asset type</option>
+                  {TYPES.filter(t => t !== "All Types").map(t => <option key={t}>{t}</option>)}
+                </select>
+                {errors.assetType && <p className="text-sm text-red-600 mt-1">{errors.assetType}</p>}
               </div>
               <div>
                 <label className="block mb-2 font-semibold text-gray-700">Base</label>
@@ -425,21 +450,25 @@ export default function ExpendituresPage() {
               <select className="border border-gray-300 rounded px-2 py-1 text-sm" value={PAGE_SIZE} disabled>
                 <option>{PAGE_SIZE} per page</option>
               </select>
-              <button className="px-2 py-1 rounded border border-gray-300 text-gray-900 hover:bg-gray-100 disabled:opacity-50"
+              <button
+                className="px-2 py-1 rounded border border-gray-300 text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                 disabled={page === 1}
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-              >&lt;</button>
-              {[...Array(totalPages)].map((_, i) => (
-                <button
-                  key={i}
-                  className={`px-3 py-1 rounded border border-blue-600 text-blue-600 font-bold bg-white${page === i + 1 ? " bg-blue-600 text-white" : ""}`}
-                  onClick={() => setPage(i + 1)}
-                >{i + 1}</button>
-              ))}
-              <button className="px-2 py-1 rounded border border-gray-300 text-gray-900 hover:bg-gray-100 disabled:opacity-50"
+              >
+                &lt;
+              </button>
+
+              <span className="w-10 h-8 flex items-center justify-center border border-blue-600 rounded font-bold text-blue-600 select-none">
+                {page}
+              </span>
+
+              <button
+                className="px-2 py-1 rounded border border-gray-300 text-gray-900 hover:bg-gray-100 disabled:opacity-50"
                 disabled={page === totalPages}
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              >&gt;</button>
+              >
+                &gt;
+              </button>
             </div>
           </div>
         </div>

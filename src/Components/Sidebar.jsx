@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   HomeIcon,
   CubeIcon,
@@ -24,21 +24,31 @@ const navItems = [
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <>
-      <div className="bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-40">
+      {/* Mobile menu button */}
+      <div className="bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-40 md:hidden">
         <div
-          className="text-2xl font-bold cursor-pointer"
-          onClick={() => navigate('/home')}
+          className="text-2xl font-bold mb-6 cursor-pointer select-none"
+          onClick={() => {
+            navigate('/home')
+            setSidebarOpen(false)
+          }}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/home'); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              navigate('/home')
+              setSidebarOpen(false)
+            }
+          }}
         >
           Military Asset Management
         </div>
         <button
-          className="focus:outline-none"
+          className="self-start mb-6 focus:outline-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Toggle sidebar"
         >
@@ -69,11 +79,17 @@ export default function Sidebar() {
       </div>
 
       <div
-        className={`bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 transform
+        className={`bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-50 transform
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out
-          md:translate-x-0 md:relative md:flex md:flex-col md:h-screen md:w-64 z-40`}
+          md:translate-x-0 md:relative md:flex md:flex-col md:h-screen md:w-64`}
       >
-        <div className="text-2xl font-bold mb-8 leading-tight hidden md:block">
+        <div
+          className="text-2xl font-bold mb-8 leading-tight cursor-pointer select-none hidden md:block"
+          onClick={() => navigate('/home')}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/home'); }}
+        >
           Military Asset
           <br />
           Management
@@ -99,8 +115,9 @@ export default function Sidebar() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
         />
       )}
     </>

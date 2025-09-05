@@ -277,48 +277,39 @@ export default function Home() {
 
   return (
     <Spin spinning={loading}>
-      <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto', borderRadius: 8 }}>
-        <h1 style={{ marginBottom: 24, fontWeight: 600, fontSize: 24 }}>Dashboard</h1>
+      <div className="p-6  mx-auto rounded-lg">
+        <h1 className="mb-6 font-semibold text-2xl">Dashboard</h1>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: 24,
-            alignItems: 'center',
-            background: '#fff',
-            padding: '20px 24px',
-            borderRadius: 12,
-            marginBottom: 24,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-          }}
-        >
-          <div>
-            <label style={{ fontWeight: 600 }}>Base</label>
+        <div className="flex gap-6 items-center bg-white p-4 rounded-xl mb-6 shadow-md">
+          <div className="flex flex-col gap-1 min-w-[180px]">
+            <label className="font-semibold text-sm text-gray-800">Base</label>
             <Select
-              style={{ minWidth: 180, marginLeft: 8 }}
+              className="w-full rounded-md border border-gray-300 bg-gray-50"
               options={baseOptions}
               value={filters.base}
               onChange={handleBaseChange}
               showSearch
               placeholder="Select Base"
+              popupClassName="custom-select-dropdown"
             />
           </div>
-          <div>
-            <label style={{ fontWeight: 600 }}>Asset Type</label>
+          <div className="flex flex-col gap-1 min-w-[180px]">
+            <label className="font-semibold text-sm text-gray-800">Asset Type</label>
             <Select
-              style={{ minWidth: 180, marginLeft: 8 }}
+              className="w-full rounded-md border border-gray-300 bg-gray-50"
               options={assetTypeOptions}
               value={filters.assetType}
               onChange={handleAssetTypeChange}
               showSearch
               placeholder="Select Asset Type"
+              popupClassName="custom-select-dropdown"
             />
           </div>
-          <div style={{ flex: 1, minWidth: 280 }}>
-            <label style={{ fontWeight: 600, display: 'block', marginBottom: 4 }}>Date Range</label>
+          <div className="flex flex-col gap-1 flex-1 min-w-[280px]">
+            <label className="font-semibold text-sm text-gray-800">Date Range</label>
             <RangePicker
               format="DD-MM-YYYY"
-              style={{ width: '100%' }}
+              className="w-full rounded-md border border-gray-300 bg-gray-50"
               onChange={handleDateRangeChange}
               value={filters.dateRange}
               allowClear
@@ -326,82 +317,42 @@ export default function Home() {
           </div>
         </div>
 
-        <Row gutter={24} style={{ marginBottom: 24 }}>
+        <Row gutter={24} className="mb-6">
           <Col span={6}>
-            <Card style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', minHeight: 120 }}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div
-                  style={{
-                    background: '#3366FF',
-                    borderRadius: '8px',
-                    width: 48,
-                    height: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <AppstoreOutlined style={{ fontSize: 28, color: '#fff' }} />
+            <Card className="rounded-2xl shadow-sm min-h-[120px]">
+              <div className="flex gap-3 items-center">
+                <div className="bg-blue-600 rounded-lg w-12 h-12 flex items-center justify-center">
+                  <AppstoreOutlined className="text-white text-2xl" />
                 </div>
                 <Statistic title="Total Assets" value={filteredStats.totalAssets} valueStyle={{ color: '#3366FF', fontWeight: 700 }} />
               </div>
             </Card>
           </Col>
           <Col span={6}>
-            <Card style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', minHeight: 120 }}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div
-                  style={{
-                    background: '#28B463',
-                    borderRadius: '8px',
-                    width: 48,
-                    height: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <LineChartOutlined style={{ fontSize: 28, color: '#fff' }} />
+            <Card className="rounded-2xl shadow-sm min-h-[120px]">
+              <div className="flex gap-3 items-center">
+                <div className="bg-green-600 rounded-lg w-12 h-12 flex items-center justify-center">
+                  <LineChartOutlined className="text-white text-2xl" />
                 </div>
                 <Statistic title="Available" value={filteredStats.available} valueStyle={{ color: '#28B463', fontWeight: 700 }} />
               </div>
             </Card>
           </Col>
           <Col span={6}>
-            <Card style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', minHeight: 120 }}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div
-                  style={{
-                    background: '#F5B041',
-                    borderRadius: '8px',
-                    width: 48,
-                    height: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <TeamOutlined style={{ fontSize: 28, color: '#fff' }} />
+            <Card className="rounded-2xl shadow-sm min-h-[120px]">
+              <div className="flex gap-3 items-center">
+                <div className="bg-yellow-400 rounded-lg w-12 h-12 flex items-center justify-center">
+                  <TeamOutlined className="text-white text-2xl" />
                 </div>
                 <Statistic title="Assigned" value={filteredStats.assigned} valueStyle={{ color: '#F5B041', fontWeight: 700 }} />
               </div>
             </Card>
           </Col>
           <Col span={6}>
-            <Card style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', minHeight: 120 }}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div
-                  style={{
-                    background: '#CB4335',
-                    borderRadius: '8px',
-                    width: 48,
-                    height: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <FireOutlined style={{ fontSize: 28, color: '#fff' }} />
+            <Card className="rounded-2xl shadow-sm min-h-[120px]">
+              <div className="flex gap-3 items-center">
+                <div className="bg-red-700 rounded-lg w-12 h-12 flex items-center justify-center">
+                  <FireOutlined className="text-white text-2xl" />
                 </div>
                 <Statistic title="Expended" value={filteredStats.expended} valueStyle={{ color: '#CB4335', fontWeight: 700 }} />
               </div>
@@ -409,18 +360,13 @@ export default function Home() {
           </Col>
         </Row>
 
-        <Row gutter={24} style={{ marginBottom: 40 }}>
+        <Row gutter={24} className="mb-10">
           <Col span={12}>
             <Card
               title="Assets by Type"
-              style={{
-                height: '450px',
-                borderRadius: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                overflow: 'hidden',
-              }}
+              className="h-[450px] rounded-2xl shadow-md overflow-hidden"
             >
-              <div style={{ height: '320px' }}>
+              <div className="h-[320px]">
                 <Pie data={filteredPieData} options={pieOptions} />
               </div>
             </Card>
@@ -428,26 +374,21 @@ export default function Home() {
           <Col span={12}>
             <Card
               title="Asset Availability"
-              style={{
-                height: '450px',
-                borderRadius: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                overflow: 'hidden',
-              }}
+              className="h-[450px] rounded-2xl shadow-md overflow-hidden"
             >
-              <div style={{ height: '320px' }}>
+              <div className="h-[320px]">
                 <Bar data={filteredBarData} options={barOptions} />
               </div>
             </Card>
           </Col>
         </Row>
 
-        <Row gutter={24} style={{ marginBottom: 40 }}>
+        <Row gutter={24} className="mb-10">
           <Col span={12}>
             <Card
               title="Recent Transfers"
-              extra={<a href="/transfers">View all</a>}
-              style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', height: 'auto', minHeight: 360 }}
+              extra={<a href="/transfers" className="text-blue-600 hover:underline">View all</a>}
+              className="rounded-2xl shadow-md min-h-[360px]"
             >
               <Table
                 dataSource={filteredTransfers}
@@ -463,8 +404,8 @@ export default function Home() {
           <Col span={12}>
             <Card
               title="Recent Purchases"
-              extra={<a href="/purchases">View all</a>}
-              style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', height: 'auto', minHeight: 360 }}
+              extra={<a href="/purchases" className="text-blue-600 hover:underline">View all</a>}
+              className="rounded-2xl shadow-md min-h-[360px]"
             >
               <Table
                 dataSource={filteredPurchases}
@@ -479,12 +420,12 @@ export default function Home() {
           </Col>
         </Row>
 
-        <Row gutter={24} style={{ marginBottom: 40 }}>
+        <Row gutter={24} className="mb-10">
           <Col span={12}>
             <Card
               title="Recent Assignments"
-              extra={<a href="/assignments">View all</a>}
-              style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', height: 'auto', minHeight: 360 }}
+              extra={<a href="/assignments" className="text-blue-600 hover:underline">View all</a>}
+              className="rounded-2xl shadow-md min-h-[360px]"
             >
               <Table
                 dataSource={filteredAssignments}
@@ -500,8 +441,8 @@ export default function Home() {
           <Col span={12}>
             <Card
               title="Recent Expenditures"
-              extra={<a href="/expenditures">View all</a>}
-              style={{ borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.03)', height: 'auto', minHeight: 360 }}
+              extra={<a href="/expenditures" className="text-blue-600 hover:underline">View all</a>}
+              className="rounded-2xl shadow-md min-h-[360px]"
             >
               <Table
                 dataSource={filteredExpenditures}

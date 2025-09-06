@@ -22,20 +22,19 @@ export default function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="min-h-screen flex ">
+    <div className="min-h-screen flex flex-col md:flex-row">
       <div
-        className="w-1/2 relative flex flex-col justify-center items-center text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/back.jpg')" }} // Image placed at public/back.jpg
+        className="w-full md:w-1/2 flex flex-col justify-center items-center bg-cover bg-center text-white relative h-64 md:h-auto"
+        style={{ backgroundImage: "url('/back.jpg')" }}
       >
-        <div className="bg-opacity-50 p-8 rounded-lg text-center max-w-xs">
-          <h1 className="text-5xl font-bold mb-4 font-serif">Military Asset</h1>
-          <h2 className="text-3xl font-semibold font-sans">Management</h2>
+        <div className="bg-opacity-50 p-6 md:p-8 rounded-lg text-center max-w-xs">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3 font-serif">Military Asset</h1>
+          <h2 className="text-2xl md:text-3xl font-semibold font-sans">Management</h2>
         </div>
       </div>
-
-      <div className="w-1/2 flex flex-col items-center justify-center bg-gray-50">
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8 w-full max-w-md">
-          <div className="text-4xl font-bold text-gray-900 mb-2 mt-2 text-center">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gray-50 px-4 py-8 md:px-0">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 md:p-8 w-full max-w-md">
+          <div className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 mt-2 text-center">
             Sign in to your account
           </div>
           <label className="block text-gray-700 font-medium mb-1">Username</label>

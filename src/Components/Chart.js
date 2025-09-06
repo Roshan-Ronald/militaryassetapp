@@ -41,11 +41,11 @@ export default function Home() {
             },
         },
     };
-
     return (
-        <div style={{ maxWidth: 350, margin: '0 auto', padding: 10 }}>
+        <div style={{ width: 500, height: 400, margin: '0 auto', padding: 10 }}>
             <h1 style={{ fontSize: 20, marginBottom: 16 }}>Dashboard</h1>
-            <Pie data={data} options={options} />
+            <Pie data={data} options={{ ...options, maintainAspectRatio: false }} />
         </div>
-    );
+    )
+
 }

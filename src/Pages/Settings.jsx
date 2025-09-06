@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const defaultSettings = {
   systemName: 'Military Asset Management System',
@@ -11,9 +11,9 @@ const defaultSettings = {
   emailNotifications: true,
   version: '1.0.0',
   lastUpdated: '9/5/2025',
-  databaseStatus: 'Connected',
-  apiStatus: 'Operational',
-};
+  databaseStatus: 'Disconnected',
+  apiStatus: '------',
+}
 
 const defaultAssetTypes = [
   'Weapon',
@@ -22,53 +22,53 @@ const defaultAssetTypes = [
   'Medical',
   'Equipment',
   'Food',
-];
+]
 
-const defaultBases = ['Base Alpha', 'Base Bravo', 'Base Charlie'];
+const defaultBases = ['Base Alpha', 'Base Bravo', 'Base Charlie']
 
-const tabs = ["General", "Asset Types", "Bases", "System"];
+const tabs = ['General', 'Asset Types', 'Bases', 'System']
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState(0);
-  const [settings, setSettings] = useState(defaultSettings);
-  const [assetTypes, setAssetTypes] = useState(defaultAssetTypes);
-  const [assetInput, setAssetInput] = useState('');
-  const [bases, setBases] = useState(defaultBases);
-  const [baseInput, setBaseInput] = useState('');
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [activeTab, setActiveTab] = useState(0)
+  const [settings, setSettings] = useState(defaultSettings)
+  const [assetTypes, setAssetTypes] = useState(defaultAssetTypes)
+  const [assetInput, setAssetInput] = useState('')
+  const [bases, setBases] = useState(defaultBases)
+  const [baseInput, setBaseInput] = useState('')
+  const [maintenanceMode, setMaintenanceMode] = useState(false)
 
   function notify(msg) {
-    alert(msg);
+    alert(msg)
   }
 
   function handleAssetAdd() {
     if (assetInput && !assetTypes.includes(assetInput)) {
-      setAssetTypes([...assetTypes, assetInput]);
-      setAssetInput('');
+      setAssetTypes([...assetTypes, assetInput])
+      setAssetInput('')
     }
   }
   function handleAssetRemove(item) {
-    setAssetTypes(assetTypes.filter((a) => a !== item));
+    setAssetTypes(assetTypes.filter(a => a !== item))
   }
   function handleBaseAdd() {
     if (baseInput && !bases.includes(baseInput)) {
-      setBases([...bases, baseInput]);
-      setBaseInput('');
+      setBases([...bases, baseInput])
+      setBaseInput('')
     }
   }
   function handleBaseRemove(item) {
-    setBases(bases.filter((b) => b !== item));
+    setBases(bases.filter(b => b !== item))
   }
   function handleSystemSave() {
-    notify('Settings saved successfully');
+    notify('Settings saved successfully')
   }
   function handleSettingsSave(e) {
-    e.preventDefault();
-    notify('Settings saved successfully');
+    e.preventDefault()
+    notify('Settings saved successfully')
   }
   function handleToggleMaintenance() {
-    setMaintenanceMode((x) => !x);
-    notify(maintenanceMode ? 'Maintenance mode disabled' : 'Maintenance mode enabled');
+    setMaintenanceMode(x => !x)
+    notify(maintenanceMode ? 'Maintenance mode disabled' : 'Maintenance mode enabled')
   }
 
   return (
@@ -80,10 +80,9 @@ export default function Settings() {
             {tabs.map((tab, i) => (
               <button
                 key={tab}
-                className={`pb-2 text-lg font-medium transition border-b-2 ${activeTab === i
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-blue-500"
-                  }`}
+                className={`pb-2 text-lg font-medium transition border-b-2 ${
+                  activeTab === i ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-blue-500'
+                }`}
                 onClick={() => setActiveTab(i)}
               >
                 {tab}
@@ -93,10 +92,7 @@ export default function Settings() {
         </div>
         <div>
           {activeTab === 0 && (
-            <form
-              className="bg-white shadow rounded-xl px-10 py-7 max-w-4xl mx-auto"
-              onSubmit={handleSettingsSave}
-            >
+            <form className="bg-white shadow rounded-xl px-10 py-7 max-w-4xl mx-auto" onSubmit={handleSettingsSave}>
               <div className="grid grid-cols-2 gap-x-10 gap-y-3 mb-6">
                 <div>
                   <label className="block font-medium mb-1">System Name</label>
@@ -199,7 +195,12 @@ export default function Settings() {
                   className="border border-gray-200 rounded-md p-2 mr-3 w-72 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   value={assetInput}
                   onChange={e => setAssetInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleAssetAdd(); } }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleAssetAdd()
+                    }
+                  }}
                 />
                 <button
                   onClick={handleAssetAdd}
@@ -235,7 +236,12 @@ export default function Settings() {
                   className="border border-gray-200 rounded-md p-2 mr-3 w-72 focus:outline-none focus:ring-2 focus:ring-blue-100"
                   value={baseInput}
                   onChange={e => setBaseInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleBaseAdd(); } }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleBaseAdd()
+                    }
+                  }}
                 />
                 <button
                   onClick={handleBaseAdd}
@@ -272,9 +278,11 @@ export default function Settings() {
                 </div>
                 <button
                   onClick={handleToggleMaintenance}
-                  className={`px-6 py-2 rounded font-semibold transition ${maintenanceMode ? "bg-gray-200 text-gray-800" : "bg-green-500 text-white hover:bg-green-600"}`}
+                  className={`px-6 py-2 rounded font-semibold transition ${
+                    maintenanceMode ? 'bg-gray-200 text-gray-800' : 'bg-green-500 text-white hover:bg-green-600'
+                  }`}
                 >
-                  {maintenanceMode ? "Disable" : "Enable"}
+                  {maintenanceMode ? 'Disable' : 'Enable'}
                 </button>
               </div>
               <h3 className="font-semibold text-lg mb-4 mt-8">System Information</h3>
@@ -286,7 +294,7 @@ export default function Settings() {
                   </div>
                   <div>
                     <div className="text-gray-500">Database Status</div>
-                    <span className="inline-block rounded-full bg-green-100 px-3 mt-1 py-1 text-green-800 font-medium text-sm">{settings.databaseStatus}</span>
+                    <span className="inline-block rounded-full bg-red-100 px-3 mt-1 py-1 text-red-800 font-medium text-sm">{settings.databaseStatus}</span>
                   </div>
                 </div>
                 <div>
@@ -296,7 +304,7 @@ export default function Settings() {
                   </div>
                   <div>
                     <div className="text-gray-500">API Status</div>
-                    <span className="inline-block rounded-full bg-green-100 px-3 mt-1 py-1 text-green-800 font-medium text-sm">{settings.apiStatus}</span>
+                    <span className="inline-block rounded-full bg-red-100 px-3 mt-1 py-1 text-red-800 font-medium text-sm">{settings.apiStatus}</span>
                   </div>
                 </div>
               </div>
@@ -312,5 +320,5 @@ export default function Settings() {
         </div>
       </div>
     </div>
-  );
+  )
 }

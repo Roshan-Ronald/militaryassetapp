@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { MagnifyingGlassIcon, FunnelIcon , PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from "react"
+import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
-const PAGE_SIZE = 10;
-const BASES = ['Base Alpha', 'Base Bravo'];
-const ASSET_TYPES = ['Weapon', 'Vehicle'];
-const STATUSES = ['Delivered', 'Pending', 'Cancelled'];
+const PAGE_SIZE = 10
+const BASES = ['Base Alpha', 'Base Bravo']
+const ASSET_TYPES = ['Weapon', 'Vehicle']
+const STATUSES = ['Delivered', 'Pending', 'Cancelled']
 
 const initialPurchases = [
   { asset: 'nn', assetType: 'Weapon', base: 'Base Bravo', supplier: 'Tech Defense Systems', quantity: 2, unitCost: 90, totalCost: 180, status: 'Delivered', date: '15-08-2025', invoice: '', notes: '' },
   { asset: 'M4 Rifle', assetType: 'Weapon', base: 'Base Alpha', supplier: 'Military Weapons Inc.', quantity: 20, unitCost: 1200, totalCost: 24000, status: 'Delivered', date: '10-05-2025', invoice: '', notes: '' },
-];
+]
 
 function getToday() {
-  const d = new Date();
-  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+  const d = new Date()
+  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`
 }
 
 function parseDate(input) {
-  const [d, m, y] = input.split('-').map(Number);
-  return new Date(y, m - 1, d);
+  const [d, m, y] = input.split('-').map(Number)
+  return new Date(y, m - 1, d)
 }
 
 export default function PurchasesPage() {
-  const [purchases, setPurchases] = useState(initialPurchases);
-  const [showFilter, setShowFilter] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [page, setPage] = useState(1);
+  const [purchases, setPurchases] = useState(initialPurchases)
+  const [showFilter, setShowFilter] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [page, setPage] = useState(1)
 
   const [filter, setFilter] = useState({
     base: "All Bases",
     assetType: "All Types",
     status: "All Statuses",
     query: "",
-  });
+  })
 
   const [newPurchase, setNewPurchase] = useState({
     asset: "",
@@ -46,65 +46,65 @@ export default function PurchasesPage() {
     date: getToday(),
     invoice: "",
     notes: "",
-  });
+  })
 
   useEffect(() => {
     setNewPurchase(np => ({
       ...np,
       totalCost: Number(np.quantity) * Number(np.unitCost)
-    }));
-  }, [newPurchase.quantity, newPurchase.unitCost]);
+    }))
+  }, [newPurchase.quantity, newPurchase.unitCost])
 
   const filtered = purchases.filter(p => {
-    if (filter.base !== "All Bases" && p.base !== filter.base) return false;
-    if (filter.assetType !== "All Types" && p.assetType !== filter.assetType) return false;
-    if (filter.status !== "All Statuses" && p.status !== filter.status) return false;
+    if (filter.base !== "All Bases" && p.base !== filter.base) return false
+    if (filter.assetType !== "All Types" && p.assetType !== filter.assetType) return false
+    if (filter.status !== "All Statuses" && p.status !== filter.status) return false
     if (filter.query.trim() && !(
       p.asset.toLowerCase().includes(filter.query.toLowerCase()) ||
       p.assetType.toLowerCase().includes(filter.query.toLowerCase()) ||
       p.supplier.toLowerCase().includes(filter.query.toLowerCase()) ||
       (p.invoice && p.invoice.toLowerCase().includes(filter.query.toLowerCase()))
-    )) return false;
-    return true;
-  });
+    )) return false
+    return true
+  })
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   function handleFilterChange(e) {
-    const { name, value } = e.target;
-    setFilter(f => ({ ...f, [name]: value }));
+    const { name, value } = e.target
+    setFilter(f => ({ ...f, [name]: value }))
   }
 
   function resetFilters() {
-    setFilter({ base: "All Bases", assetType: "All Types", status: "All Statuses", query: "" });
-    setShowFilter(false);
-    setPage(1);
+    setFilter({ base: "All Bases", assetType: "All Types", status: "All Statuses", query: "" })
+    setShowFilter(false)
+    setPage(1)
   }
 
   function applyFilters() {
-    setShowFilter(false);
-    setPage(1);
+    setShowFilter(false)
+    setPage(1)
   }
 
   function handleNewChange(e) {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setNewPurchase(np => ({
       ...np,
       [name]: name === "quantity" || name === "unitCost" ? value.replace(/[^0-9]/g, '') : value,
-    }));
+    }))
   }
 
   function addPurchase(e) {
-    e.preventDefault();
-    const purchase = { ...newPurchase, totalCost: Number(newPurchase.quantity) * Number(newPurchase.unitCost) };
-    setPurchases([purchase, ...purchases]);
+    e.preventDefault()
+    const purchase = { ...newPurchase, totalCost: Number(newPurchase.quantity) * Number(newPurchase.unitCost) }
+    setPurchases([purchase, ...purchases])
     setNewPurchase({
       asset: "", assetType: "", base: "", supplier: "", quantity: 1,
       unitCost: 0, totalCost: 0, status: "", date: getToday(), invoice: "", notes: ""
-    });
-    setShowNew(false);
-    setPage(1);
+    })
+    setShowNew(false)
+    setPage(1)
   }
 
   return (
@@ -114,7 +114,7 @@ export default function PurchasesPage() {
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={() => setShowFilter(v => !v)}
-            className={`flex items-center  gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 focus:outline-none ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
+            className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 focus:outline-none ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
           >
             <FunnelIcon className="w-5 h-5" />
             Filters
@@ -178,25 +178,25 @@ export default function PurchasesPage() {
             </tr>
           </thead>
           <tbody>
-            {paged.length === 0 ?
-              (<tr><td colSpan={7} className="text-center p-4 text-gray-500">No purchases found.</td></tr>)
-              : paged.map((p, i) => (
-                <tr key={i} className="even:bg-gray-50 hover:bg-blue-50">
-                  <td className="px-3 py-4 border-r border-gray-300 font-semibold text-blue-600 cursor-pointer">{p.asset}</td>
-                  <td className="px-3 py-4 border-r border-gray-300">{p.assetType}</td>
-                  <td className="px-3 py-4 border-r border-gray-300">{p.base}</td>
-                  <td className="px-3 py-4 border-r border-gray-300">{p.quantity}</td>
-                  <td className="px-3 py-4 border-r border-gray-300">{p.totalCost.toLocaleString()}</td>
-                  <td className="px-3 py-4 border-r border-gray-300">
-                    <span className={`inline-block text-[12px] font-semibold rounded-full px-3 py-1 ${p.status === "Delivered" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-4 text-right">
-                    <button className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">View</button>
-                  </td>
-                </tr>
-              ))}
+            {paged.length === 0 ? (
+              <tr><td colSpan={7} className="text-center p-4 text-gray-500">No purchases found.</td></tr>
+            ) : paged.map((p, i) => (
+              <tr key={i} className="even:bg-gray-50 hover:bg-blue-50">
+                <td className="px-3 py-4 border-r border-gray-300 font-semibold text-blue-600 cursor-pointer">{p.asset}</td>
+                <td className="px-3 py-4 border-r border-gray-300">{p.assetType}</td>
+                <td className="px-3 py-4 border-r border-gray-300">{p.base}</td>
+                <td className="px-3 py-4 border-r border-gray-300">{p.quantity}</td>
+                <td className="px-3 py-4 border-r border-gray-300">{p.totalCost.toLocaleString()}</td>
+                <td className="px-3 py-4 border-r border-gray-300">
+                  <span className={`inline-block text-[12px] font-semibold rounded-full px-3 py-1 ${p.status === "Delivered" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                    {p.status}
+                  </span>
+                </td>
+                <td className="px-3 py-4 text-right">
+                  <button className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">View</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
@@ -245,5 +245,5 @@ export default function PurchasesPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -28,8 +28,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-40 md:hidden">
+      <div className="fixed inset-y-0 left-0 w-64 bg-[#101726] text-white px-4 pt-6 flex flex-col z-40 md:hidden">
         <div
           className="text-2xl font-bold mb-6 cursor-pointer select-none"
           onClick={() => {
@@ -79,16 +78,18 @@ export default function Sidebar() {
       </div>
 
       <div
-        className={`bg-[#101726] text-white fixed inset-y-0 left-0 w-64 px-4 pt-6 flex flex-col h-screen z-50 transform
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out
-          md:translate-x-0 md:relative md:flex md:flex-col md:h-screen md:w-64`}
+        className={`fixed inset-y-0 left-0 w-64 bg-[#101726] text-white px-4 pt-6 flex flex-col transition-transform duration-300 ease-in-out z-50
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          md:translate-x-0 md:relative md:flex md:h-screen`}
       >
         <div
           className="text-2xl font-bold mb-8 leading-tight cursor-pointer select-none hidden md:block"
           onClick={() => navigate('/home')}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter') navigate('/home'); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') navigate('/home')
+          }}
         >
           Military Asset
           <br />
@@ -100,7 +101,8 @@ export default function Sidebar() {
               to={to}
               key={name}
               className={({ isActive }) =>
-                `flex items-center px-4 py-3 rounded-lg font-medium hover:bg-[#222d3b] ${isActive ? 'bg-[#22324b] text-white' : 'text-gray-200'
+                `flex items-center px-4 py-3 rounded-lg font-medium hover:bg-[#222d3b] ${
+                  isActive ? 'bg-[#22324b] text-white' : 'text-gray-200'
                 }`
               }
               end

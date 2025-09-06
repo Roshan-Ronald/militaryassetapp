@@ -11,6 +11,7 @@ import Assignments from './Pages/AssignmentsPage.jsx';
 import ExpendituresPage from './Pages/ExpendituresPage.jsx';
 import UsersPage from './Pages/UsersPage.jsx';
 import Settings from './Pages/Settings.jsx';
+import Profile from './Pages/Profile.jsx';
 
 function App() {
   const location = useLocation();
@@ -44,6 +45,7 @@ function App() {
             <Route path="/expenditures" element={isAuthenticated ? <ExpendituresPage /> : <Navigate to="/" />} />
             <Route path="/users" element={isAuthenticated ? <UsersPage /> : <Navigate to="/" />} />
             <Route path="/settings" element={isAuthenticated ? <Settings /> : <Navigate to="/" />} />
+            <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} /> 
             <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/"} />} />
           </Routes>
         </main>

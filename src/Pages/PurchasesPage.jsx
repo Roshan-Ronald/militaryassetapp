@@ -1,38 +1,29 @@
-import React, { useState, useEffect } from "react"
-import { MagnifyingGlassIcon, FunnelIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import React, { useState, useEffect } from "react";
+import { FunnelIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {  getPurchases,  createPurchase,} from "../Api";
 
-const PAGE_SIZE = 10
-const BASES = ['Base Alpha', 'Base Bravo']
-const ASSET_TYPES = ['Weapon', 'Vehicle']
-const STATUSES = ['Delivered', 'Pending', 'Cancelled']
-
-const initialPurchases = [
-  { asset: 'nn', assetType: 'Weapon', base: 'Base Bravo', supplier: 'Tech Defense Systems', quantity: 2, unitCost: 90, totalCost: 180, status: 'Delivered', date: '15-08-2025', invoice: '', notes: '' },
-  { asset: 'M4 Rifle', assetType: 'Weapon', base: 'Base Alpha', supplier: 'Military Weapons Inc.', quantity: 20, unitCost: 1200, totalCost: 24000, status: 'Delivered', date: '10-05-2025', invoice: '', notes: '' },
-]
+const PAGE_SIZE = 10;
+const BASES = ['Base Alpha', 'Base Bravo'];
+const ASSET_TYPES = ['Weapon', 'Vehicle'];
+const STATUSES = ['Delivered', 'Pending', 'Cancelled'];
 
 function getToday() {
-  const d = new Date()
-  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`
-}
-
-function parseDate(input) {
-  const [d, m, y] = input.split('-').map(Number)
-  return new Date(y, m - 1, d)
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
 }
 
 export default function PurchasesPage() {
-  const [purchases, setPurchases] = useState(initialPurchases)
-  const [showFilter, setShowFilter] = useState(false)
-  const [showNew, setShowNew] = useState(false)
-  const [page, setPage] = useState(1)
+  const [purchases, setPurchases] = useState([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [filter, setFilter] = useState({
     base: "All Bases",
     assetType: "All Types",
     status: "All Statuses",
     query: "",
-  })
+  });
 
   const [newPurchase, setNewPurchase] = useState({
     asset: "",
@@ -46,65 +37,75 @@ export default function PurchasesPage() {
     date: getToday(),
     invoice: "",
     notes: "",
-  })
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getPurchases();
+      setPurchases(data);
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setNewPurchase(np => ({
       ...np,
       totalCost: Number(np.quantity) * Number(np.unitCost)
-    }))
-  }, [newPurchase.quantity, newPurchase.unitCost])
+    }));
+  }, [newPurchase.quantity, newPurchase.unitCost]);
 
   const filtered = purchases.filter(p => {
-    if (filter.base !== "All Bases" && p.base !== filter.base) return false
-    if (filter.assetType !== "All Types" && p.assetType !== filter.assetType) return false
-    if (filter.status !== "All Statuses" && p.status !== filter.status) return false
+    if (filter.base !== "All Bases" && p.base !== filter.base) return false;
+    if (filter.assetType !== "All Types" && p.assetType !== filter.assetType) return false;
+    if (filter.status !== "All Statuses" && p.status !== filter.status) return false;
     if (filter.query.trim() && !(
       p.asset.toLowerCase().includes(filter.query.toLowerCase()) ||
       p.assetType.toLowerCase().includes(filter.query.toLowerCase()) ||
       p.supplier.toLowerCase().includes(filter.query.toLowerCase()) ||
       (p.invoice && p.invoice.toLowerCase().includes(filter.query.toLowerCase()))
-    )) return false
-    return true
-  })
+    )) return false;
+    return true;
+  });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   function handleFilterChange(e) {
-    const { name, value } = e.target
-    setFilter(f => ({ ...f, [name]: value }))
+    const { name, value } = e.target;
+    setFilter(f => ({ ...f, [name]: value }));
   }
 
   function resetFilters() {
-    setFilter({ base: "All Bases", assetType: "All Types", status: "All Statuses", query: "" })
-    setShowFilter(false)
-    setPage(1)
+    setFilter({ base: "All Bases", assetType: "All Types", status: "All Statuses", query: "" });
+    setShowFilter(false);
+    setPage(1);
   }
 
   function applyFilters() {
-    setShowFilter(false)
-    setPage(1)
+    setShowFilter(false);
+    setPage(1);
   }
 
   function handleNewChange(e) {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setNewPurchase(np => ({
       ...np,
       [name]: name === "quantity" || name === "unitCost" ? value.replace(/[^0-9]/g, '') : value,
-    }))
+    }));
   }
 
-  function addPurchase(e) {
-    e.preventDefault()
-    const purchase = { ...newPurchase, totalCost: Number(newPurchase.quantity) * Number(newPurchase.unitCost) }
-    setPurchases([purchase, ...purchases])
+  async function addPurchase(e) {
+    e.preventDefault();
+    const purchase = { ...newPurchase, totalCost: Number(newPurchase.quantity) * Number(newPurchase.unitCost), id: Date.now() };
+    await createPurchase(purchase);
+    const data = await getPurchases();
+    setPurchases(data);
     setNewPurchase({
       asset: "", assetType: "", base: "", supplier: "", quantity: 1,
       unitCost: 0, totalCost: 0, status: "", date: getToday(), invoice: "", notes: ""
-    })
-    setShowNew(false)
-    setPage(1)
+    });
+    setShowNew(false);
+    setPage(1);
   }
 
   return (
@@ -182,12 +183,12 @@ export default function PurchasesPage() {
               <tr><td colSpan={7} className="text-center p-4 text-gray-500">No purchases found.</td></tr>
             ) : paged.map((p, i) => (
               <tr key={i} className="even:bg-gray-50 hover:bg-blue-50">
-                <td className="px-3 py-4 border-r border-gray-300 font-semibold text-blue-600 cursor-pointer">{p.asset}</td>
-                <td className="px-3 py-4 border-r border-gray-300">{p.assetType}</td>
-                <td className="px-3 py-4 border-r border-gray-300">{p.base}</td>
-                <td className="px-3 py-4 border-r border-gray-300">{p.quantity}</td>
-                <td className="px-3 py-4 border-r border-gray-300">{p.totalCost.toLocaleString()}</td>
-                <td className="px-3 py-4 border-r border-gray-300">
+                <td className="px-2 sm:px-3 py-3 sm:py-4  font-semibold text-blue-600 cursor-pointer">{p.asset}</td>
+                <td className="px-2 sm:px-3 py-3 sm:py-4 ">{p.assetType}</td>
+                <td className="px-2 sm:px-3 py-3 sm:py-4 ">{p.base}</td>
+                <td className="px-2 sm:px-3 py-3 sm:py-4 ">{p.quantity}</td>
+                <td className="px-2 sm:px-3 py-3 sm:py-4 ">{p.totalCost.toLocaleString()}</td>
+                <td className="px-2 sm:px-3 py-3 sm:py-4 ">
                   <span className={`inline-block text-[12px] font-semibold rounded-full px-3 py-1 ${p.status === "Delivered" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
                     {p.status}
                   </span>
@@ -219,24 +220,26 @@ export default function PurchasesPage() {
               <h2 className="text-2xl font-bold">Add New Purchase</h2>
               <button onClick={() => setShowNew(false)} className="text-gray-500 hover:text-gray-800 font-bold text-xl">×</button>
             </div>
-            <form onSubmit={addPurchase} className="space-y-6">
-              <input type="text" name="asset" value={newPurchase.asset} onChange={handleNewChange} placeholder="Asset Name" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <select name="assetType" value={newPurchase.assetType} onChange={handleNewChange} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 cursor-pointer">
-                <option value="">Select Asset Type</option>
-                {ASSET_TYPES.map(t => <option key={t}>{t}</option>)}
-              </select>
-              <select name="base" value={newPurchase.base} onChange={handleNewChange} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 cursor-pointer">
-                <option value="">Select Base</option>
-                {BASES.map(b => <option key={b}>{b}</option>)}
-              </select>
-              <input type="text" name="supplier" value={newPurchase.supplier} onChange={handleNewChange} placeholder="Supplier" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <input type="number" min="1" name="quantity" value={newPurchase.quantity} onChange={handleNewChange} placeholder="Quantity" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <input type="number" min="0" name="unitCost" value={newPurchase.unitCost} onChange={handleNewChange} placeholder="Unit Cost ($)" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <input type="text" name="totalCost" value={newPurchase.totalCost} readOnly className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed" />
-              <input type="text" name="date" value={newPurchase.date} onChange={handleNewChange} placeholder="Purchase Date (dd-mm-yyyy)" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <input type="text" name="invoice" value={newPurchase.invoice} onChange={handleNewChange} placeholder="Invoice Number (optional)" className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
-              <textarea name="notes" value={newPurchase.notes} onChange={handleNewChange} placeholder="Notes (optional)" className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600"></textarea>
-              <div className="flex justify-end gap-4">
+            <form onSubmit={addPurchase} className="space-y-6 px-4 sm:px-6 md:px-0 max-w-lg mx-auto bg-white p-6 rounded-lg shadow border border-gray-300">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <input type="text" name="asset" value={newPurchase.asset} onChange={handleNewChange} placeholder="Asset Name" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <select name="assetType" value={newPurchase.assetType} onChange={handleNewChange} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 cursor-pointer">
+                  <option value="">Select Asset Type</option>
+                  {ASSET_TYPES.map(t => <option key={t}>{t}</option>)}
+                </select>
+                <select name="base" value={newPurchase.base} onChange={handleNewChange} required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 cursor-pointer">
+                  <option value="">Select Base</option>
+                  {BASES.map(b => <option key={b}>{b}</option>)}
+                </select>
+                <input type="text" name="supplier" value={newPurchase.supplier} onChange={handleNewChange} placeholder="Supplier" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <input type="number" min="1" name="quantity" value={newPurchase.quantity} onChange={handleNewChange} placeholder="Quantity" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <input type="number" min="0" name="unitCost" value={newPurchase.unitCost} onChange={handleNewChange} placeholder="Unit Cost ($)" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <input type="text" name="totalCost" value={newPurchase.totalCost} readOnly className="w-full px-4 py-3 border rounded-lg bg-gray-100 cursor-not-allowed" />
+                <input type="text" name="date" value={newPurchase.date} onChange={handleNewChange} placeholder="Purchase Date (dd-mm-yyyy)" required className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <input type="text" name="invoice" value={newPurchase.invoice} onChange={handleNewChange} placeholder="Invoice Number (optional)" className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600" />
+                <textarea name="notes" value={newPurchase.notes} onChange={handleNewChange} placeholder="Notes (optional)" className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 md:col-span-2" rows={3} />
+              </div>
+              <div className="flex justify-end gap-4 mt-6">
                 <button type="button" onClick={() => setShowNew(false)} className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100">Cancel</button>
                 <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create Purchase</button>
               </div>
@@ -245,5 +248,6 @@ export default function PurchasesPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
+

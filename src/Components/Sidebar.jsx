@@ -28,9 +28,9 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="fixed inset-y-0 left-0 w-64 bg-[#101726] text-white px-4 pt-6 flex flex-col z-40 md:hidden">
+      <div className="fixed top-0 left-0 w-full flex items-center justify-between bg-[#101726] text-white px-4 py-3 md:hidden z-50">
         <div
-          className="text-2xl font-bold mb-6 cursor-pointer select-none"
+          className="text-lg font-bold cursor-pointer select-none"
           onClick={() => {
             navigate('/home')
             setSidebarOpen(false)
@@ -47,7 +47,7 @@ export default function Sidebar() {
           Military Asset Management
         </div>
         <button
-          className="self-start mb-6 focus:outline-none"
+          className="focus:outline-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Toggle sidebar"
         >
@@ -58,7 +58,7 @@ export default function Sidebar() {
               viewBox="0 0 24 24"
               strokeWidth="2"
               stroke="currentColor"
-              className="w-8 h-8"
+              className="w-7 h-7"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -69,7 +69,7 @@ export default function Sidebar() {
               viewBox="0 0 24 24"
               strokeWidth="2"
               stroke="currentColor"
-              className="w-8 h-8"
+              className="w-7 h-7"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -78,7 +78,7 @@ export default function Sidebar() {
       </div>
 
       <div
-        className={`fixed inset-y-0 left-0 w-64 bg-[#101726] text-white px-4 pt-6 flex flex-col transition-transform duration-300 ease-in-out z-50
+        className={`fixed inset-y-0 left-0 w-64 bg-[#101726] text-white px-4 pt-6 flex flex-col transition-transform duration-300 ease-in-out z-40
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           md:translate-x-0 md:relative md:flex md:h-screen`}
       >
@@ -95,7 +95,7 @@ export default function Sidebar() {
           <br />
           Management
         </div>
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1 mt-6 md:mt-0">
           {navItems.map(({ name, to, icon: Icon }) => (
             <NavLink
               to={to}
@@ -117,7 +117,7 @@ export default function Sidebar() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />

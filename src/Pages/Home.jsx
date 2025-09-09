@@ -1,25 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Row, Col, Card, Statistic, Select, DatePicker, Spin, Table, Tag } from 'antd'
 import moment from 'moment'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  PieController,
-} from 'chart.js'
+import {  Chart as ChartJS,  CategoryScale,  LinearScale,  BarElement,  Title,  Tooltip,  Legend,  ArcElement,  PieController,} from 'chart.js'
 import { Pie, Bar } from 'react-chartjs-2'
-import {
-  AppstoreOutlined,
-  LineChartOutlined,
-  TeamOutlined,
-  FireOutlined,
-} from '@ant-design/icons'
-
+import {  AppstoreOutlined,  LineChartOutlined,  TeamOutlined,  FireOutlined,} from '@ant-design/icons'
 
 ChartJS.register(
   CategoryScale,
@@ -32,9 +16,7 @@ ChartJS.register(
   PieController
 )
 
-
 const { RangePicker } = DatePicker
-
 
 export default function Home() {
   const [loading, setLoading] = useState(true)
@@ -46,7 +28,6 @@ export default function Home() {
   const [assignments, setAssignments] = useState([])
   const [expenditures, setExpenditures] = useState([])
   const [filters, setFilters] = useState({ base: 'all', assetType: 'all', dateRange: [] })
-
 
   const baseOptions = [
     { label: 'All Bases', value: 'all' },
@@ -61,11 +42,8 @@ export default function Home() {
     { label: 'Ammunition', value: 'Ammunition' },
   ]
 
-
   useEffect(() => {
     setLoading(true)
-
-
     const storedStats = {
       totalAssets: 14,
       available: 11230,
@@ -99,7 +77,6 @@ export default function Home() {
       { asset: '5.56mm Ammunition', reason: 'Training', quantity: 1000, date: 'May 10, 2025', assetType: 'Ammunition' },
     ]
 
-
     setStats(storedStats)
     setPieData({
       labels: storedPieData.map(i => i.type),
@@ -122,11 +99,8 @@ export default function Home() {
     setPurchases(storedPurchases)
     setAssignments(storedAssignments)
     setExpenditures(storedExpenditures)
-
-
     setLoading(false)
   }, [])
-
 
   const filterByBase = (item) => {
     if (!filters.base || filters.base.toLowerCase() === 'all') return true
@@ -139,7 +113,6 @@ export default function Home() {
     )
   }
 
-
   const filterByAssetType = (item) => {
     if (!filters.assetType || filters.assetType.toLowerCase() === 'all') return true
     const assetTypeFilter = filters.assetType.toLowerCase()
@@ -147,7 +120,6 @@ export default function Home() {
     if (typeof item.asset === 'string' && item.asset.toLowerCase().includes(assetTypeFilter)) return true
     return false
   }
-
 
   const filterByDateRange = (item) => {
     if (!filters.dateRange || filters.dateRange.length !== 2) return true
@@ -158,7 +130,6 @@ export default function Home() {
     if (!itemDate.isValid()) return true
     return itemDate.isBetween(start, end, null, '[]')
   }
-
 
   const filteredTransfers = useMemo(
     () => transfers.filter(t => filterByBase(t) && filterByAssetType(t)),
@@ -177,7 +148,6 @@ export default function Home() {
     [filters.base, filters.assetType, filters.dateRange, expenditures]
   )
 
-
   const filteredStats = useMemo(() => {
     const expendedQuantity = filteredExpenditures.reduce((sum, e) => sum + (e.quantity || 0), 0)
     const assignedQuantity = filteredAssignments.reduce((sum, a) => sum + (a.quantity || 0), 0)
@@ -195,13 +165,12 @@ export default function Home() {
     }
   }, [filteredTransfers, filteredPurchases, filteredAssignments, filteredExpenditures])
 
-
   const filteredPieData = useMemo(() => {
     const counts = {}
-      ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach((item) => {
-        const key = item.assetType || 'Other'
-        counts[key] = (counts[key] || 0) + (item.quantity || 1)
-      })
+    ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach((item) => {
+      const key = item.assetType || 'Other'
+      counts[key] = (counts[key] || 0) + (item.quantity || 1)
+    })
     return {
       labels: Object.keys(counts),
       datasets: [
@@ -214,14 +183,13 @@ export default function Home() {
     }
   }, [filteredTransfers, filteredPurchases, filteredAssignments, filteredExpenditures])
 
-
   const filteredBarData = useMemo(() => {
     const availableMap = {}
     const assignedMap = {}
-      ;[...filteredTransfers, ...filteredPurchases].forEach((item) => {
-        const key = item.assetType || 'Other'
-        availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
-      })
+    ;[...filteredTransfers, ...filteredPurchases].forEach((item) => {
+      const key = item.assetType || 'Other'
+      availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
+    })
     filteredAssignments.forEach((item) => {
       const key = item.assetType || 'Other'
       assignedMap[key] = (assignedMap[key] || 0) + (item.quantity || 0)
@@ -238,7 +206,6 @@ export default function Home() {
     }
   }, [filteredTransfers, filteredPurchases, filteredAssignments])
 
-
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -247,7 +214,6 @@ export default function Home() {
       title: { display: false },
     },
   }
-
 
   const barOptions = {
     responsive: true,
@@ -258,7 +224,6 @@ export default function Home() {
     },
     scales: { y: { beginAtZero: true } },
   }
-
 
   const columns = {
     transfers: [
@@ -299,23 +264,18 @@ export default function Home() {
     ],
   }
 
-
   const { transfers: columnsTransfers, purchases: columnsPurchases, assignments: columnsAssignments, expenditures: columnsExpenditures } = columns
-
 
   const handleBaseChange = (value) => setFilters(f => ({ ...f, base: value || 'all' }))
   const handleAssetTypeChange = (value) => setFilters(f => ({ ...f, assetType: value || 'all' }))
   const handleDateRangeChange = (dates) => setFilters(f => ({ ...f, dateRange: dates || [] }))
 
-
   return (
     <Spin spinning={loading}>
-      <div className="p-6 mx-auto rounded-lg max-w-7xl">
-        <h1 className="mb-6 font-semibold text-2xl">Dashboard</h1>
-
-
-        <div className="flex flex-wrap gap-6 items-center bg-white p-4 rounded-xl mb-6 shadow-md">
-          <div className="flex flex-col gap-1 min-w-[180px] flex-1">
+      <div className="p-4 md:p-6 mx-auto rounded-lg max-w-7xl">
+        <h1 className="mb-6 font-semibold text-xl md:text-2xl">Dashboard</h1>
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-stretch bg-white p-4 rounded-xl mb-6 shadow-md">
+          <div className="flex flex-col gap-1 min-w-[160px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Base</label>
             <Select
               className="w-full rounded-md border border-gray-300 bg-gray-50"
@@ -328,7 +288,7 @@ export default function Home() {
               allowClear
             />
           </div>
-          <div className="flex flex-col gap-1 min-w-[180px] flex-1">
+          <div className="flex flex-col gap-1 min-w-[160px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Asset Type</label>
             <Select
               className="w-full rounded-md border border-gray-300 bg-gray-50"
@@ -341,7 +301,7 @@ export default function Home() {
               allowClear
             />
           </div>
-          <div className="flex flex-col gap-1 min-w-[280px] flex-1">
+          <div className="flex flex-col gap-1 min-w-[220px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Date Range</label>
             <RangePicker
               format="DD-MM-YYYY"
@@ -352,9 +312,7 @@ export default function Home() {
             />
           </div>
         </div>
-
-
-        <Row gutter={[24, 24]} className="mb-6">
+        <Row gutter={[16, 16]} className="mb-6">
           <Col xs={24} sm={12} md={6}>
             <Card className="rounded-2xl shadow-sm min-h-28">
               <div className="flex gap-3 items-center">
@@ -396,51 +354,41 @@ export default function Home() {
             </Card>
           </Col>
         </Row>
-        <Row gutter={24} className="mb-10">
-          <Col span={12} className="w-full md:w-1/2">
-            <Card
-              title="Assets by Type"
-              className="h-[450px] rounded-2xl shadow-md overflow-hidden"
-            >
-              <div className="h-[320px] md:h-[320px]">
+        <Row gutter={[16, 16]} className="mb-10">
+          <Col xs={24} md={12}>
+            <Card title="Assets by Type" className="h-[400px] rounded-2xl shadow-md overflow-hidden">
+              <div className="h-[280px] md:h-[320px]">
                 <Pie data={filteredPieData} options={pieOptions} />
               </div>
             </Card>
           </Col>
-          <Col span={12} className="w-full md:w-1/2">
-            <Card
-              title="Asset Availability"
-              className="h-[450px] rounded-2xl shadow-md overflow-hidden"
-            >
-              <div className="h-[320px] md:h-[320px]">
+          <Col xs={24} md={12}>
+            <Card title="Asset Availability" className="h-[400px] rounded-2xl shadow-md overflow-hidden">
+              <div className="h-[280px] md:h-[320px]">
                 <Bar data={filteredBarData} options={barOptions} />
               </div>
             </Card>
           </Col>
         </Row>
-        <Row gutter={[24, 24]} className="mb-10">
-          <Col xs={24} md={12}>
-            <Card title="Recent Transfers" extra={<a href="/transfers" className="text-blue-600 hover:underline">View all</a>} className="rounded-xl shadow-md" style={{ minHeight: 300 }}>
-              <Table dataSource={filteredTransfers} columns={columnsTransfers} size="middle" pagination={false} scroll={{ x: 600 }} rowKey={(r, i) => i} bordered />
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            <Card title="Recent Transfers" className="rounded-2xl shadow-md overflow-hidden">
+              <Table dataSource={filteredTransfers} columns={columnsTransfers} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
-          <Col xs={24} md={12}>
-            <Card title="Recent Purchases" extra={<a href="/purchases" className="text-blue-600 hover:underline">View all</a>} className="rounded-xl shadow-md" style={{ minHeight: 300 }}>
-              <Table dataSource={filteredPurchases} columns={columnsPurchases} size="middle" pagination={false} scroll={{ x: 600 }} rowKey={(r, i) => i} bordered />
+          <Col xs={24} lg={12}>
+            <Card title="Recent Purchases" className="rounded-2xl shadow-md overflow-hidden">
+              <Table dataSource={filteredPurchases} columns={columnsPurchases} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
-        </Row>
-
-
-        <Row gutter={[24, 24]} className="mb-10">
-          <Col xs={24} md={12}>
-            <Card title="Recent Assignments" extra={<a href="/assignments" className="text-blue-600 hover:underline">View all</a>} className="rounded-xl shadow-md" style={{ minHeight: 300 }}>
-              <Table dataSource={filteredAssignments} columns={columnsAssignments} size="middle" pagination={false} scroll={{ x: 600 }} rowKey={(r, i) => i} bordered />
+          <Col xs={24} lg={12}>
+            <Card title="Recent Assignments" className="rounded-2xl shadow-md overflow-hidden">
+              <Table dataSource={filteredAssignments} columns={columnsAssignments} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
-          <Col xs={24} md={12}>
-            <Card title="Recent Expenditures" extra={<a href="/expenditures" className="text-blue-600 hover:underline">View all</a>} className="rounded-xl shadow-md" style={{ minHeight: 300 }}>
-              <Table dataSource={filteredExpenditures} columns={columnsExpenditures} size="middle" pagination={false} scroll={{ x: 600 }} rowKey={(r, i) => i} bordered />
+          <Col xs={24} lg={12}>
+            <Card title="Recent Expenditures" className="rounded-2xl shadow-md overflow-hidden">
+              <Table dataSource={filteredExpenditures} columns={columnsExpenditures} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
         </Row>

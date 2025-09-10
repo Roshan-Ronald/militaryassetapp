@@ -106,20 +106,20 @@ export default function AssignmentsPage() {
   }
 
   return (
-    <div className="max-w-full lg:max-w-[1100px] mx-auto mt-6 px-3 font-sans">
+    <div className="max-w-full xl:max-w-[1200px] mx-auto mt-6 px-3 sm:px-4 md:px-6 lg:px-8 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-2xl md:text-3xl font-bold text-[#181C32]">Assignments</h1>
-        <div className="flex gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <button
             onClick={() => setShowFilter(v => !v)}
-            className={`flex items-center justify-center gap-1 w-full md:w-auto px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
+            className={`flex items-center justify-center gap-1 w-full sm:w-auto px-4 py-2 rounded-lg text-sm md:text-base font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50 ${showFilter ? 'ring-2 ring-blue-200' : ''}`}
           >
             <FunnelIcon className="w-5 h-5" />
             Filters
           </button>
           <button
             onClick={() => setShowAddForm(true)}
-            className="flex items-center justify-center gap-1 w-full md:w-auto px-5 py-2 rounded-lg text-white font-bold bg-[#039BE5] hover:bg-[#0277BD] shadow-sm"
+            className="flex items-center justify-center gap-1 w-full sm:w-auto px-5 py-2 rounded-lg text-white text-sm md:text-base font-bold bg-[#039BE5] hover:bg-[#0277BD] shadow-sm"
           >
             <PlusIcon className="w-5 h-5" />
             New Assignment
@@ -129,11 +129,11 @@ export default function AssignmentsPage() {
 
       {showFilter && (
         <div className="mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="flex flex-col">
               <label className="font-semibold mb-1 text-gray-700">Base</label>
               <select
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.base}
                 onChange={e => setFilter(f => ({ ...f, base: e.target.value }))}
               >
@@ -145,7 +145,7 @@ export default function AssignmentsPage() {
             <div className="flex flex-col">
               <label className="font-semibold mb-1 text-gray-700">Asset Type</label>
               <select
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.assetType}
                 onChange={e => setFilter(f => ({ ...f, assetType: e.target.value }))}
               >
@@ -157,7 +157,7 @@ export default function AssignmentsPage() {
             <div className="flex flex-col">
               <label className="font-semibold mb-1 text-gray-700">Status</label>
               <select
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.status}
                 onChange={e => setFilter(f => ({ ...f, status: e.target.value }))}
               >
@@ -171,7 +171,7 @@ export default function AssignmentsPage() {
               <input
                 type="text"
                 placeholder="dd-mm-yyyy"
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.startDate}
                 onChange={e => setFilter(f => ({ ...f, startDate: e.target.value }))}
               />
@@ -181,7 +181,7 @@ export default function AssignmentsPage() {
               <input
                 type="text"
                 placeholder="dd-mm-yyyy"
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.endDate}
                 onChange={e => setFilter(f => ({ ...f, endDate: e.target.value }))}
               />
@@ -191,14 +191,14 @@ export default function AssignmentsPage() {
               <input
                 type="text"
                 placeholder="Search by asset name, personnel, or purpose"
-                className="border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm md:text-base"
                 value={filter.query}
                 onChange={e => setFilter(f => ({ ...f, query: e.target.value }))}
               />
             </div>
             <div className="flex w-full justify-end gap-3 sm:col-span-2 lg:col-span-3">
               <button
-                className="px-6 py-2 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50"
+                className="px-5 sm:px-6 py-2 border border-gray-300 rounded-lg font-semibold text-gray-700 text-sm md:text-base hover:bg-gray-50"
                 onClick={() =>
                   setFilter({
                     base: 'All Bases',
@@ -214,7 +214,7 @@ export default function AssignmentsPage() {
                 Reset
               </button>
               <button
-                className="px-6 py-2 bg-[#039BE5] rounded-lg text-white font-semibold hover:bg-[#0277BD]"
+                className="px-5 sm:px-6 py-2 bg-[#039BE5] rounded-lg text-white font-semibold text-sm md:text-base hover:bg-[#0277BD]"
                 type="button"
                 onClick={() => setShowFilter(false)}
               >
@@ -226,48 +226,48 @@ export default function AssignmentsPage() {
       )}
 
       {showAddForm && (
-        <form onSubmit={handleAddSubmit} className="mb-6 bg-white p-6 rounded-xl shadow border border-gray-300">
-          <h2 className="text-xl font-bold mb-4">Add New Assignment</h2>
+        <form onSubmit={handleAddSubmit} className="mb-6 bg-white p-4 sm:p-6 rounded-xl shadow border border-gray-300">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">Add New Assignment</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input required className="border rounded px-3 py-2" placeholder="Asset" value={newData.asset} onChange={e => setNewData({ ...newData, asset: e.target.value })} />
-            <select required className="border rounded px-3 py-2" value={newData.assetType} onChange={e => setNewData({ ...newData, assetType: e.target.value })}>
+            <input required className="border rounded px-3 py-2 text-sm md:text-base" placeholder="Asset" value={newData.asset} onChange={e => setNewData({ ...newData, asset: e.target.value })} />
+            <select required className="border rounded px-3 py-2 text-sm md:text-base" value={newData.assetType} onChange={e => setNewData({ ...newData, assetType: e.target.value })}>
               <option value="">Select Asset Type</option>
               {TYPES.filter(t => t !== 'All Types').map(t => <option key={t}>{t}</option>)}
             </select>
-            <select required className="border rounded px-3 py-2" value={newData.base} onChange={e => setNewData({ ...newData, base: e.target.value })}>
+            <select required className="border rounded px-3 py-2 text-sm md:text-base" value={newData.base} onChange={e => setNewData({ ...newData, base: e.target.value })}>
               <option value="">Select Base</option>
               {BASES.filter(b => b !== 'All Bases').map(b => <option key={b}>{b}</option>)}
             </select>
-            <input required type="text" className="border rounded px-3 py-2" placeholder="Assigned To" value={newData.assignedTo} onChange={e => setNewData({ ...newData, assignedTo: e.target.value })} />
-            <input required type="number" min="1" className="border rounded px-3 py-2" placeholder="Quantity" value={newData.quantity} onChange={e => setNewData({ ...newData, quantity: e.target.value })} />
-            <input required type="number" min="0" className="border rounded px-3 py-2" placeholder="Returned" value={newData.returned} onChange={e => setNewData({ ...newData, returned: e.target.value })} />
-            <input required className="border rounded px-3 py-2 md:col-span-2" placeholder="Purpose" value={newData.purpose} onChange={e => setNewData({ ...newData, purpose: e.target.value })} />
-            <select required className="border rounded px-3 py-2" value={newData.status} onChange={e => setNewData({ ...newData, status: e.target.value })}>
+            <input required type="text" className="border rounded px-3 py-2 text-sm md:text-base" placeholder="Assigned To" value={newData.assignedTo} onChange={e => setNewData({ ...newData, assignedTo: e.target.value })} />
+            <input required type="number" min="1" className="border rounded px-3 py-2 text-sm md:text-base" placeholder="Quantity" value={newData.quantity} onChange={e => setNewData({ ...newData, quantity: e.target.value })} />
+            <input required type="number" min="0" className="border rounded px-3 py-2 text-sm md:text-base" placeholder="Returned" value={newData.returned} onChange={e => setNewData({ ...newData, returned: e.target.value })} />
+            <input required className="border rounded px-3 py-2 md:col-span-2 text-sm md:text-base" placeholder="Purpose" value={newData.purpose} onChange={e => setNewData({ ...newData, purpose: e.target.value })} />
+            <select required className="border rounded px-3 py-2 text-sm md:text-base" value={newData.status} onChange={e => setNewData({ ...newData, status: e.target.value })}>
               <option value="">Select Status</option>
               {STATUSES.filter(s => s !== 'All Statuses').map(s => <option key={s}>{s}</option>)}
             </select>
-            <input required type="text" className="border rounded px-3 py-2" placeholder="Start Date (May 10, 2025)" value={newData.startDate} onChange={e => setNewData({ ...newData, startDate: e.target.value })} />
-            <input required type="text" className="border rounded px-3 py-2" placeholder="End Date (Aug 15, 2025)" value={newData.endDate} onChange={e => setNewData({ ...newData, endDate: e.target.value })} />
+            <input required type="text" className="border rounded px-3 py-2 text-sm md:text-base" placeholder="Start Date (May 10, 2025)" value={newData.startDate} onChange={e => setNewData({ ...newData, startDate: e.target.value })} />
+            <input required type="text" className="border rounded px-3 py-2 text-sm md:text-base" placeholder="End Date (Aug 15, 2025)" value={newData.endDate} onChange={e => setNewData({ ...newData, endDate: e.target.value })} />
           </div>
-          <div className="mt-4 flex justify-end gap-4">
-            <button type="button" className="px-4 py-2 border rounded" onClick={() => setShowAddForm(false)}>Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Add</button>
+          <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+            <button type="button" className="px-4 py-2 border rounded text-sm md:text-base" onClick={() => setShowAddForm(false)}>Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded text-sm md:text-base">Add</button>
           </div>
         </form>
       )}
 
       <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-x-auto">
-        <table className="w-full border-collapse min-w-[650px] text-left text-[13px] text-[#182233]">
+        <table className="w-full border-collapse min-w-[650px] text-left text-xs sm:text-sm md:text-[13px] text-[#182233]">
           <thead>
             <tr className="bg-[#FAFAFB] text-[#181C32] font-bold border-b border-gray-300">
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">ASSET</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">BASE</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">ASSIGNED TO</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">QUANTITY</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">PURPOSE</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">STATUS</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">START DATE</th>
-              <th className="px-3 py-4 border-r border-gray-300 whitespace-nowrap">ACTIONS</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">ASSET</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">BASE</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">ASSIGNED TO</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">QUANTITY</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">PURPOSE</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">STATUS</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">START DATE</th>
+              <th className="px-2 sm:px-3 py-3 sm:py-4 border-r border-gray-300 whitespace-nowrap">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -278,47 +278,45 @@ export default function AssignmentsPage() {
             ) : (
               filtered.map((assignment, idx) => (
                 <tr className="border-b border-gray-100 hover:bg-[#F1FAFE]" key={idx}>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
                     <span className="block font-semibold text-blue-600 cursor-pointer hover:underline">{assignment.asset}</span>
-                    <span className="block text-[13px] text-gray-500 mt-1">{assignment.assetType}</span>
+                    <span className="block text-[12px] sm:text-[13px] text-gray-500 mt-1">{assignment.assetType}</span>
                   </td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">{assignment.base}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">{assignment.base}</td>
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
                     {assignment.assignedTo.split('<br/>').map((line, i) => (
                       <span key={i} className="block">{line}</span>
                     ))}
                   </td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
                     <div>
                       <span>{assignment.quantity}</span>
                       <span className="block text-xs text-gray-500">{assignment.returned} returned</span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">{assignment.purpose}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
-                    <span className="inline-block bg-[#E8F2FF] text-blue-600 font-semibold rounded-full px-4 py-1 text-xs">{assignment.status}</span>
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">{assignment.purpose}</td>
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
+                    <span className="inline-block bg-[#E8F2FF] text-blue-600 font-semibold rounded-full px-3 sm:px-4 py-1 text-[11px] sm:text-xs">{assignment.status}</span>
                   </td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
                     <span>{assignment.startDate}</span>
                     <span className="block text-xs text-gray-500">to {assignment.endDate}</span>
                   </td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 ">
-                    <button className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">View</button>
+                  <td className="px-2 sm:px-3 py-3 sm:py-4">
+                    <button className="text-blue-600 font-semibold text-xs sm:text-sm hover:underline cursor-pointer">View</button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
-        <div className="flex flex-col md:flex-row justify-between items-center px-5 py-3 gap-3">
-          <span className="text-sm text-gray-700">Showing 1 to {filtered.length} of {filtered.length} results</span>
-          <div className="flex items-center gap-2">
-            <select className="border border-gray-300 rounded px-2 py-1 text-sm" disabled>
-              <option>10 per page</option>
-            </select>
-            <button className="px-2 py-1 rounded border border-gray-300 text-gray-900 disabled:opacity-50 cursor-not-allowed" disabled>&lt;</button>
-            <button className="px-3 py-1 rounded border border-blue-600 text-blue-600 font-bold bg-white">1</button>
-            <button className="px-2 py-1 rounded border border-gray-300 text-gray-900 disabled:opacity-50 cursor-not-allowed" disabled>&gt;</button>
+        <div className="flex flex-col md:flex-row justify-between items-center px-3 sm:px-5 py-3 gap-3">
+          <span className="text-xs sm:text-sm text-gray-700">Showing 1 to {filtered.length} of {filtered.length} results</span>
+          <div className="flex items-center gap-1">
+            <button className="px-2 sm:px-3 py-1 border rounded text-xs sm:text-sm">Previous</button>
+            <button className="px-2 sm:px-3 py-1 border rounded bg-blue-600 text-white text-xs sm:text-sm">1</button>
+            <button className="px-2 sm:px-3 py-1 border rounded text-xs sm:text-sm">2</button>
+            <button className="px-2 sm:px-3 py-1 border rounded text-xs sm:text-sm">Next</button>
           </div>
         </div>
       </div>

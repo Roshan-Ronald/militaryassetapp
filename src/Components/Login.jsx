@@ -1,23 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ setIsAuthenticated }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (username === 'roshanronald' && password === 'roshan@17') {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setIsAuthenticated(true);
-        navigate('/home');
-      }, 1800);
+    if (username === "roshanronald" && password === "roshan@17") {
+      setIsAuthenticated(true);
+      navigate("/home", { state: { loginSuccess: true } });
     } else {
-      alert('Invalid username or password');
+      alert("Invalid username or password");
     }
   };
 
@@ -28,12 +23,19 @@ export default function Login({ setIsAuthenticated }) {
         style={{ backgroundImage: "url('/back.jpg')" }}
       >
         <div className="bg-opacity-50 p-6 md:p-8 rounded-lg text-center max-w-xs">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3 font-serif">Military Asset</h1>
-          <h2 className="text-2xl md:text-3xl font-semibold font-sans">Management</h2>
+          <h1 className="text-4xl md:text-5xl font-bold mb-3 font-serif">
+            Military Asset
+          </h1>
+          <h2 className="text-2xl md:text-3xl font-semibold font-sans">
+            Management
+          </h2>
         </div>
       </div>
       <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gray-50 px-4 py-8 md:px-0">
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 md:p-8 w-full max-w-md">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-xl shadow-md p-6 md:p-8 w-full max-w-md"
+        >
           <div className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 mt-2 text-center">
             Sign in to your account
           </div>
@@ -42,7 +44,7 @@ export default function Login({ setIsAuthenticated }) {
             type="text"
             placeholder="Enter your username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full px-4 py-2 mb-4 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
             autoFocus
           />
@@ -51,7 +53,7 @@ export default function Login({ setIsAuthenticated }) {
             type="password"
             placeholder="Enter your password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 mb-4 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="mb-6 text-right">
@@ -61,17 +63,9 @@ export default function Login({ setIsAuthenticated }) {
           </div>
           <button
             type="submit"
-            className="w-full cursor-pointer bg-blue-600 text-white font-medium rounded-md py-2 text-lg hover:bg-blue-700 transition flex items-center justify-center"
-            disabled={loading}
+            className="w-full cursor-pointer bg-blue-600 text-white font-medium rounded-md py-2 text-lg hover:bg-blue-700 transition"
           >
-            {loading ? (
-              <>
-                <span className="w-5 h-5 border-2 border-white rounded-full animate-spin mr-2"></span>
-                Signing in...
-              </>
-            ) : (
-              'Sign in'
-            )}
+            Sign in
           </button>
         </form>
       </div>

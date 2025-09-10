@@ -31,7 +31,9 @@ export default function ExpendituresPage() {
     quantity: 1,
     reason: "",
     notes: "",
-    expendedBy: { name: "", rank: "", id: "" },
+    expendedByName: "",
+    expendedByRank: "",
+    expendedById: "",
     date: getTodayDMY(),
     location: ""
   })
@@ -109,8 +111,8 @@ export default function ExpendituresPage() {
     if (!f.base.trim()) e.base = "Select base"
     if (!f.reason.trim()) e.reason = "Select reason"
     if (!f.quantity || Number(f.quantity) < 1) e.quantity = "Enter quantity"
-    if (!f.expendedBy.name.trim()) e.expendedByName = "Expended by name required"
-    if (!f.expendedBy.rank.trim()) e.expendedByRank = "Expended by rank required"
+    if (!f.expendedByName.trim()) e.expendedByName = "Expended by name required"
+    if (!f.expendedByRank.trim()) e.expendedByRank = "Expended by rank required"
     if (!f.date.trim()) e.date = "Date required"
     setErrors(e)
     return Object.keys(e).length === 0
@@ -120,6 +122,10 @@ export default function ExpendituresPage() {
     e.preventDefault()
     if (!validateForm(form)) return
 
+    const monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const [dd, mm, yyyy] = form.date.split("-")
+    const formattedDate = `${dd} ${monthNames[Number(mm)]}, ${yyyy}`
+
     const expenditure = {
       id: Date.now(),
       asset: form.asset,
@@ -128,12 +134,8 @@ export default function ExpendituresPage() {
       quantity: Number(form.quantity),
       reason: form.reason,
       notes: form.notes,
-      expendedBy: { name: form.expendedBy.name, rank: form.expendedBy.rank, id: form.expendedBy.id },
-      date: form.date
-        .split("-")
-        .map((p, i) => (i === 1 ? ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(p)] : p))
-        .reverse()
-        .join(" "),
+      expendedBy: { name: form.expendedByName, rank: form.expendedByRank, id: form.expendedById },
+      date: formattedDate,
       location: form.location
     }
     await createExpenditure(expenditure)
@@ -147,7 +149,9 @@ export default function ExpendituresPage() {
       quantity: 1,
       reason: "",
       notes: "",
-      expendedBy: { name: "", rank: "", id: "" },
+      expendedByName: "",
+      expendedByRank: "",
+      expendedById: "",
       date: getTodayDMY(),
       location: ""
     })
@@ -156,148 +160,147 @@ export default function ExpendituresPage() {
   }
 
   return (
-    <div className="max-w-[1100px] mx-auto py-6 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
-          <h1 className="text-3xl font-bold text-slate-900 min-w-[200px] flex-grow">Expenditures</h1>
-          <div className="flex gap-3 flex-wrap">
-            <button
-              className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition ${showFilter ? "ring-2 ring-blue-300" : ""}`}
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <FunnelIcon className="w-5 h-5" />
-              Filters
-            </button>
-            <button
-              className="flex items-center gap-1 px-5 py-2 rounded-lg text-white font-bold bg-blue-600 hover:bg-blue-700 shadow-sm"
-              onClick={() => setShowForm(true)}
-            >
-              <PlusIcon className="w-5 h-5" />
-              New Expenditure
-            </button>
+    <div className="max-w-full lg:max-w-[1100px] mx-auto py-4 sm:py-6 px-3 sm:px-6 lg:px-8 font-sans">
+      <div className="flex flex-wrap items-center justify-between mb-6 gap-3 sm:gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 min-w-[200px] flex-grow">Expenditures</h1>
+        <div className="flex gap-2 sm:gap-3 flex-wrap">
+          <button
+            className={`flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition ${showFilter ? "ring-2 ring-blue-300" : ""}`}
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <FunnelIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            Filters
+          </button>
+          <button
+            className="flex items-center gap-1 px-4 sm:px-5 py-2 rounded-lg text-white font-bold bg-blue-600 hover:bg-blue-700 shadow-sm"
+            onClick={() => setShowForm(true)}
+          >
+            <PlusIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            New Expenditure
+          </button>
+        </div>
+      </div>
+
+      {showFilter && (
+        <div className="bg-white rounded-xl shadow border border-slate-200 p-4 sm:p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 items-end">
+          <div>
+            <label className="block mb-1 font-semibold text-sm text-slate-700">Base</label>
+            <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.base} onChange={(e) => setFilter(f => ({ ...f, base: e.target.value }))}>
+              {BASES.map(b => <option key={b}>{b}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-sm text-slate-700">Asset Type</label>
+            <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.assetType} onChange={e => setFilter(f => ({ ...f, assetType: e.target.value }))}>
+              {TYPES.map(t => <option key={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-sm text-slate-700">Reason</label>
+            <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.reason} onChange={e => setFilter(f => ({ ...f, reason: e.target.value }))}>
+              {REASONS.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-semibold text-sm text-slate-700">Search</label>
+            <input type="text" className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Search..." value={filter.search} onChange={e => setFilter(f => ({ ...f, search: e.target.value }))} />
+          </div>
+          <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end gap-2 sm:gap-3">
+            <button className="px-3 sm:px-4 py-2 border border-slate-300 rounded hover:bg-slate-100" onClick={handleReset}>Reset</button>
+            <button className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onClick={handleApply}>Apply</button>
           </div>
         </div>
+      )}
 
-        {showFilter && (
-          <div className="bg-white rounded-xl shadow border border-slate-200 p-6 mb-6 grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-            <div>
-              <label className="block mb-1 font-semibold text-sm text-slate-700">Base</label>
-              <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.base} onChange={(e) => setFilter(f => ({ ...f, base: e.target.value }))}>
-                {BASES.map(b => <option key={b}>{b}</option>)}
+      {showForm && (
+        <div className="max-w-lg sm:max-w-xl mx-auto bg-white rounded-xl shadow border border-slate-300 p-4 sm:p-6 mb-8 sm:mb-10">
+          <button onClick={() => setShowForm(false)} className="mb-4 sm:mb-6 flex items-center text-blue-600 hover:underline gap-2">
+            <ArrowRightIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+            Back
+          </button>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">New Expenditure</h2>
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <input type="text" placeholder="Asset" name="asset" className="border border-slate-300 rounded px-3 py-2" value={form.asset} onChange={e => setForm({ ...form, asset: e.target.value })} required />
+              <select name="assetType" className="border border-slate-300 rounded px-3 py-2" value={form.assetType} onChange={e => setForm({ ...form, assetType: e.target.value })} required>
+                <option value="">Select Asset Type</option>
+                {TYPES.filter(t => t !== "All Types").map(t => <option key={t}>{t}</option>)}
               </select>
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-sm text-slate-700">Asset Type</label>
-              <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.assetType} onChange={e => setFilter(f => ({ ...f, assetType: e.target.value }))}>
-                {TYPES.map(t => <option key={t}>{t}</option>)}
+              <select name="base" className="border border-slate-300 rounded px-3 py-2" value={form.base} onChange={e => setForm({ ...form, base: e.target.value })} required>
+                <option value="">Select Base</option>
+                {BASES.filter(b => b !== "All Bases").map(b => <option key={b}>{b}</option>)}
               </select>
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-sm text-slate-700">Reason</label>
-              <select className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" value={filter.reason} onChange={e => setFilter(f => ({ ...f, reason: e.target.value }))}>
-                {REASONS.map(r => <option key={r}>{r}</option>)}
+              <input type="number" name="quantity" min="1" className="border border-slate-300 rounded px-3 py-2" value={form.quantity} onChange={e => setForm({ ...form, quantity: e.target.value })} required />
+              <select name="reason" className="border border-slate-300 rounded px-3 py-2" value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} required>
+                <option value="">Select Reason</option>
+                {REASONS.filter(r => r !== "All Reasons").map(r => <option key={r}>{r}</option>)}
               </select>
+              <input type="text" name="expendedByName" placeholder="Expended By Name" className="border border-slate-300 rounded px-3 py-2" value={form.expendedByName} onChange={e => setForm({ ...form, expendedByName: e.target.value })} required />
+              <input type="text" name="expendedByRank" placeholder="Expended By Rank" className="border border-slate-300 rounded px-3 py-2" value={form.expendedByRank} onChange={e => setForm({ ...form, expendedByRank: e.target.value })} required />
+              <input type="text" name="expendedById" placeholder="Expended By ID (optional)" className="border border-slate-300 rounded px-3 py-2" value={form.expendedById} onChange={e => setForm({ ...form, expendedById: e.target.value })} />
+              <input type="text" name="date" placeholder="Date (dd-mm-yyyy)" className="border border-slate-300 rounded px-3 py-2" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+              <input type="text" name="location" placeholder="Location (optional)" className="border border-slate-300 rounded px-3 py-2" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
             </div>
-            <div>
-              <label className="block mb-1 font-semibold text-sm text-slate-700">Search</label>
-              <input type="text" className="w-full border border-slate-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Search..." value={filter.search} onChange={e => setFilter(f => ({ ...f, search: e.target.value }))} />
+            <textarea name="notes" placeholder="Notes (optional)" rows="3" className="border border-slate-300 rounded px-3 py-2 resize-none w-full" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+            <div className="flex justify-end gap-3 sm:gap-4">
+              <button type="button" className="px-3 sm:px-4 py-2 border border-slate-300 rounded hover:bg-slate-100" onClick={() => setShowForm(false)}>Cancel</button>
+              <button type="submit" className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
             </div>
-            <div className="col-span-4 flex justify-end gap-3">
-              <button className="px-4 py-2 border border-slate-300 rounded hover:bg-slate-100" onClick={handleReset}>Reset</button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onClick={handleApply}>Apply</button>
-            </div>
-          </div>
-        )}
+          </form>
+        </div>
+      )}
 
-        {showForm && (
-          <div className="max-w-xl mx-auto bg-white rounded-xl shadow border border-slate-300 p-6 mb-10">
-            <button onClick={() => setShowForm(false)} className="mb-6 flex items-center text-blue-600 hover:underline gap-2">
-              <ArrowIcon className="w-6 h-6" />
-              Back
-            </button>
-            <h2 className="text-2xl font-bold mb-6">New Expenditure</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <input type="text" placeholder="Asset" name="asset" className="border border-slate-300 rounded px-3 py-2" value={form.asset} onChange={e => setForm({...form, asset: e.target.value})} required />
-                <select name="assetType" className="border border-slate-300 rounded px-3 py-2" value={form.assetType} onChange={e => setForm({...form, assetType: e.target.value})} required>
-                  {TYPES.filter(t => t !== "All Types").map(t => <option key={t}>{t}</option>)}
-                </select>
-                <select name="base" className="border border-slate-300 rounded px-3 py-2" value={form.base} onChange={e => setForm({...form, base: e.target.value})} required>
-                  {BASES.filter(b => b !== "All Bases").map(b => <option key={b}>{b}</option>)}
-                </select>
-                <input type="number" name="quantity" min="1" className="border border-slate-300 rounded px-3 py-2" value={form.quantity} onChange={e => setForm({...form, quantity: e.target.value})} required />
-                <select name="reason" className="border border-slate-300 rounded px-3 py-2" value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} required>
-                  {REASONS.filter(r => r !== "All Reasons").map(r => <option key={r}>{r}</option>)}
-                </select>
-                <input type="text" name="expendedBy.name" placeholder="Expended By Name" className="border border-slate-300 rounded px-3 py-2" value={form.expendedBy.name} onChange={e => setForm({...form, expendedBy: {...form.expendedBy, name: e.target.value}})} required />
-                <input type="text" name="expendedBy.rank" placeholder="Expended By Rank" className="border border-slate-300 rounded px-3 py-2" value={form.expendedBy.rank} onChange={e => setForm({...form, expendedBy: {...form.expendedBy, rank: e.target.value}})} required />
-                <input type="text" name="expendedBy.id" placeholder="Expended By ID (optional)" className="border border-slate-300 rounded px-3 py-2" value={form.expendedBy.id} onChange={e => setForm({...form, expendedBy: {...form.expendedBy, id: e.target.value}})} />
-                <input type="text" name="date" placeholder="Date (dd-mm-yyyy)" className="border border-slate-300 rounded px-3 py-2" value={form.date} onChange={e => setForm({...form, date: e.target.value})} required />
-                <input type="text" name="location" placeholder="Location (optional)" className="border border-slate-300 rounded px-3 py-2" value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
-              </div>
-              <textarea name="notes" placeholder="Notes (optional)" rows="3" className="border border-slate-300 rounded px-3 py-2 resize-none w-full" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} />
-              <div className="flex justify-end gap-4">
-                <button type="button" className="px-4 py-2 border border-slate-300 rounded hover:bg-slate-100" onClick={() => setShowForm(false)}>Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        <div className="overflow-x-auto rounded-xl shadow border border-slate-300 bg-white">
-          <table className="min-w-full border-collapse text-sm text-left text-slate-800">
-            <thead className="bg-slate-100 font-semibold text-slate-900 text-xs uppercase tracking-wide">
+      <div className="overflow-x-auto rounded-xl shadow border border-slate-300 bg-white">
+        <table className="min-w-full border-collapse text-xs sm:text-sm md:text-base text-left text-slate-800">
+          <thead className="bg-slate-100 font-semibold text-slate-900 text-xs sm:text-sm uppercase tracking-wide">
+            <tr>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Asset</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Base</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Quantity</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Reason</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Expended By</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Date</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedRows.length === 0 ? (
               <tr>
-                <th className="px-4 py-3 border border-slate-300">Asset</th>
-                <th className="px-4 py-3 border border-slate-300">Base</th>
-                <th className="px-4 py-3 border border-slate-300">Quantity</th>
-                <th className="px-4 py-3 border border-slate-300">Reason</th>
-                <th className="px-4 py-3 border border-slate-300">Expended By</th>
-                <th className="px-4 py-3 border border-slate-300">Date</th>
-                <th className="px-4 py-3 border border-slate-300">Actions</th>
+                <td className="text-center p-3 sm:p-4 text-slate-500" colSpan={7}>No expenditures found.</td>
               </tr>
-            </thead>
-            <tbody>
-              {paginatedRows.length === 0 ? (
-                <tr>
-                  <td className="text-center p-4 text-slate-500" colSpan={7}>No expenditures found.</td>
+            ) : (
+              paginatedRows.map((row, idx) => (
+                <tr key={idx} className="odd:bg-white even:bg-slate-50 hover:bg-slate-100">
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">
+                    <div className="font-semibold text-blue-600 cursor-pointer">{row.asset}</div>
+                    <div className="text-xs text-slate-500">{row.assetType}</div>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">{row.base}</td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">{row.quantity}</td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">
+                    <span className="inline-block bg-blue-100 text-blue-700 rounded-full px-2 sm:px-3 pb-0.5 pt-0.5 text-xs font-semibold">{row.reason}</span>
+                    <div className="text-xs text-slate-500">{row.notes}</div>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300">
+                    <div>{row.expendedBy.name}</div>
+                    <div className="text-xs text-slate-500">{row.expendedBy.rank}</div>
+                  </td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300 whitespace-nowrap">{row.date}</td>
+                  <td className="px-2 sm:px-4 py-2 sm:py-3 border border-slate-300 text-center">
+                    <button className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm">View</button>
+                  </td>
                 </tr>
-              ) : (
-                paginatedRows.map((row, idx) => (
-                  <tr key={idx} className="odd:bg-white even:bg-slate-50 hover:bg-slate-100">
-                    <td className="px-4 py-3 border border-slate-300">
-                      <div className="font-semibold text-blue-600 cursor-pointer">{row.asset}</div>
-                      <div className="text-xs text-slate-500">{row.assetType}</div>
-                    </td>
-                    <td className="px-4 py-3 border border-slate-300">{row.base}</td>
-                    <td className="px-4 py-3 border border-slate-300">{row.quantity}</td>
-                    <td className="px-4 py-3 border border-slate-300">
-                      <span className="inline-block bg-blue-100 text-blue-700 rounded-full px-3 pb-0.5 pt-0.5 text-xs font-semibold">{row.reason}</span>
-                      <div className="text-xs text-slate-500">{row.notes}</div>
-                    </td>
-                    <td className="px-4 py-3 border border-slate-300">
-                      <div>{row.expendedBy.name}</div>
-                      <div className="text-xs text-slate-500">{row.expendedBy.rank}</div>
-                    </td>
-                    <td className="px-4 py-3 border border-slate-300">{row.date}</td>
-                    <td className="px-4 py-3 border border-slate-300 text-right">
-                      <button className="text-blue-600 hover:underline">View</button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between p-4 text-sm">
-            <div>Showing {paginatedRows.length > 0 ? (page - 1) * PAGE_SIZE + 1 : 0} to {Math.min(page * PAGE_SIZE, filteredRows.length)} of {filteredRows.length} results</div>
-            <div className="flex items-center space-x-2">
-              <button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="px-3 py-1 rounded border bg-white hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50">{'<'}</button>
-              {[...Array(totalPages)].map((_, i) => (
-                <button key={i} onClick={() => setPage(i + 1)} className={`px-3 py-1 rounded border ${page === i + 1 ? "bg-blue-600 text-white" : "bg-white hover:bg-slate-100"}`}>{i + 1}</button>
-              ))}
-              <button disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="px-3 py-1 rounded border bg-white hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50">{'>'}</button>
-            </div>
-          </div>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-between items-center mt-4 text-xs sm:text-sm">
+        <div>Page {page} of {totalPages}</div>
+        <div className="flex gap-2">
+          <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-2 sm:px-3 py-1 border rounded disabled:opacity-50">Prev</button>
+          <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)} className="px-2 sm:px-3 py-1 border rounded disabled:opacity-50">Next</button>
         </div>
       </div>
     </div>

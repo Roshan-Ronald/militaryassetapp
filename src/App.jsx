@@ -1,19 +1,23 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Login from './Components/Login.jsx';
-import Sidebar from './Components/Sidebar.jsx';
-import TopBar from './Components/TopBar.jsx';
-import Home from './Pages/Home.jsx';
-import AssetManager from './Pages/AssetManager.jsx';
-import Transfers from './Pages/Transfers.jsx';
-import PurchasesPage from './Pages/PurchasesPage.jsx';
-import Assignments from './Pages/AssignmentsPage.jsx';
-import ExpendituresPage from './Pages/ExpendituresPage.jsx';
-import UsersPage from './Pages/UsersPage.jsx';
-import Settings from './Pages/Settings.jsx';
-import Profile from './Pages/Profile.jsx';
-import Loading from './Components/Loading.jsx';
-import { bindApiToWindow } from './utils/apiWindowBindings';
+// App.jsx
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import Login from './Components/Login.jsx'
+import Sidebar from './Components/Sidebar.jsx'
+import TopBar from './Components/TopBar.jsx'
+import Home from './Pages/Home.jsx'
+import AssetManager from './Pages/AssetManager.jsx'
+import Transfers from './Pages/Transfers.jsx'
+import PurchasesPage from './Pages/PurchasesPage.jsx'
+import Assignments from './Pages/AssignmentsPage.jsx'
+import ExpendituresPage from './Pages/ExpendituresPage.jsx'
+import UsersPage from './Pages/UsersPage.jsx'
+import Settings from './Pages/Settings.jsx'
+import Profile from './Pages/Profile.jsx'
+import Loading from './Components/Loading.jsx'
+import { bindApiToWindow } from './utils/apiWindowBindings'
+import { FiMenu, FiX } from 'react-icons/fi'
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const MAIN_PAGES = [
   "/home",
@@ -25,43 +29,71 @@ const MAIN_PAGES = [
   "/users",
   "/settings",
   "/profile"
-];
+]
 
 function App() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === "/";
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation()
+  const isLoginPage = location.pathname === "/"
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    bindApiToWindow();
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
+    bindApiToWindow()
+    setTimeout(() => setLoading(false), 1000)
+  }, [])
 
   useEffect(() => {
     if (MAIN_PAGES.includes(location.pathname)) {
-      setLoading(true);
-      const timeout = setTimeout(() => setLoading(false), 500);
-      return () => clearTimeout(timeout);
+      setLoading(true)
+      const timeout = setTimeout(() => setLoading(false), 500)
+      return () => clearTimeout(timeout)
     } else {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [location.pathname]);
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!isLoginPage) {
+      setSidebarOpen(false)
+    }
+  }, [isLoginPage])
+
+  const handleNavLinkClick = () => {
+    setSidebarOpen(false)
+  }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative bg-gray-50">
       {!isLoginPage && (
-        <div className="fixed inset-y-0 left-0 w-64 bg-[#101726] z-40">
-          <Sidebar />
-        </div>
+        <>
+          <div
+            className={`fixed top-0 left-0 h-full bg-[#101726] z-40 w-64 
+              transform transition-transform duration-300 ease-in-out
+              ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+            style={{ pointerEvents: sidebarOpen || window.innerWidth >= 768 ? 'auto' : 'none' }}
+          >
+            <Sidebar onNavLinkClick={handleNavLinkClick} />
+          </div>
+          <button
+            className="fixed top-4 left-4 z-50 p-2 rounded-md text-black bg-transparent md:hidden focus:outline-none"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle menu"
+          >
+            {sidebarOpen ? <FiX size={24} color="white" /> : <FiMenu size={24} color="black" />}
+          </button>
+        </>
       )}
-      <div className={`flex flex-col flex-1 ${!isLoginPage ? "ml-64" : ""}`}>
+      <div className={`flex flex-col flex-1 ${!isLoginPage ? 'md:ml-64' : ''}`}>
         {!isLoginPage && (
-          <div className="fixed top-0 left-64 right-0 z-30">
+          <div className="fixed top-0 left-0 md:left-64 right-0 z-30">
             <TopBar />
           </div>
         )}
-        <main className={`overflow-auto ${!isLoginPage ? "pt-16 px-6" : ""}`}>
+        <main
+          className={`overflow-auto w-full max-w-screen-2xl mx-auto 
+            ${!isLoginPage ? 'pt-20 px-4 sm:px-6 md:px-8 lg:px-12' : ''}`}
+        >
           {MAIN_PAGES.includes(location.pathname) && loading ? (
             <Loading />
           ) : (
@@ -81,8 +113,10 @@ function App() {
           )}
         </main>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
+
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

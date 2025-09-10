@@ -1,24 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Row, Col, Card, Statistic, Select, DatePicker, Spin, Table, Tag } from 'antd'
+import { Row, Col, Card, Statistic, Select, DatePicker, Spin, Table, Tag, message } from 'antd'
 import moment from 'moment'
-import {  Chart as ChartJS,  CategoryScale,  LinearScale,  BarElement,  Title,  Tooltip,  Legend,  ArcElement,  PieController,} from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PieController } from 'chart.js'
 import { Pie, Bar } from 'react-chartjs-2'
-import {  AppstoreOutlined,  LineChartOutlined,  TeamOutlined,  FireOutlined,} from '@ant-design/icons'
+import { AppstoreOutlined, LineChartOutlined, TeamOutlined, FireOutlined } from '@ant-design/icons'
+import { useLocation } from 'react-router-dom'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  PieController
-)
 
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PieController)
 const { RangePicker } = DatePicker
 
 export default function Home() {
+  const location = useLocation()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({ totalAssets: 0, available: 0, assigned: 0, expended: 0 })
   const [pieData, setPieData] = useState({ labels: [], datasets: [] })
@@ -43,18 +36,12 @@ export default function Home() {
   ]
 
   useEffect(() => {
-    setLoading(true)
-    const storedStats = {
-      totalAssets: 14,
-      available: 11230,
-      assigned: 0,
-      expended: 1000,
+    if (location.state?.loginSuccess) {
+      message.success("Successfully connected!")
     }
-    const storedPieData = [
-      { type: 'Weapon', value: 10 },
-      { type: 'Vehicle', value: 3 },
-      { type: 'Ammunition', value: 1 },
-    ]
+
+    const storedStats = { totalAssets: 14, available: 11230, assigned: 0, expended: 1000 }
+    const storedPieData = [{ type: 'Weapon', value: 10 }, { type: 'Vehicle', value: 3 }, { type: 'Ammunition', value: 1 }]
     const storedBarData = [
       { type: 'Weapon', available: 1120, assigned: 0 },
       { type: 'Vehicle', available: 1000, assigned: 0 },
@@ -70,23 +57,13 @@ export default function Home() {
       { asset: 'nn', base: 'Base Bravo', quantity: 2, status: 'Delivered', assetType: 'Weapon' },
       { asset: 'M4 Rifle', base: 'Base Alpha', quantity: 20, status: 'Delivered', assetType: 'Weapon' },
     ]
-    const storedAssignments = [
-      { asset: 'M4 Rifle', assignedTo: 'Squad Alpha', quantity: 20, status: 'Returned', assetType: 'Weapon' },
-    ]
-    const storedExpenditures = [
-      { asset: '5.56mm Ammunition', reason: 'Training', quantity: 1000, date: 'May 10, 2025', assetType: 'Ammunition' },
-    ]
+    const storedAssignments = [{ asset: 'M4 Rifle', assignedTo: 'Squad Alpha', quantity: 20, status: 'Returned', assetType: 'Weapon' }]
+    const storedExpenditures = [{ asset: '5.56mm Ammunition', reason: 'Training', quantity: 1000, date: 'May 10, 2025', assetType: 'Ammunition' }]
 
     setStats(storedStats)
     setPieData({
       labels: storedPieData.map(i => i.type),
-      datasets: [
-        {
-          label: 'Assets by Type',
-          data: storedPieData.map(i => i.value),
-          backgroundColor: ['#3366FF', '#28B463', '#F5B041'],
-        },
-      ],
+      datasets: [{ label: 'Assets by Type', data: storedPieData.map(i => i.value), backgroundColor: ['#3366FF', '#28B463', '#F5B041'] }],
     })
     setBarData({
       labels: storedBarData.map(i => i.type),
@@ -102,18 +79,13 @@ export default function Home() {
     setLoading(false)
   }, [])
 
-  const filterByBase = (item) => {
+  const filterByBase = item => {
     if (!filters.base || filters.base.toLowerCase() === 'all') return true
     const baseFilter = filters.base.toLowerCase()
-    return (
-      (item.base && item.base.toLowerCase() === baseFilter) ||
-      (item.from && item.from.toLowerCase() === baseFilter) ||
-      (item.to && item.to.toLowerCase() === baseFilter) ||
-      (item.assignedTo && item.assignedTo.toLowerCase() === baseFilter)
-    )
+    return (item.base && item.base.toLowerCase() === baseFilter) || (item.from && item.from.toLowerCase() === baseFilter) || (item.to && item.to.toLowerCase() === baseFilter) || (item.assignedTo && item.assignedTo.toLowerCase() === baseFilter)
   }
 
-  const filterByAssetType = (item) => {
+  const filterByAssetType = item => {
     if (!filters.assetType || filters.assetType.toLowerCase() === 'all') return true
     const assetTypeFilter = filters.assetType.toLowerCase()
     if (item.assetType && item.assetType.toLowerCase() === assetTypeFilter) return true
@@ -121,7 +93,7 @@ export default function Home() {
     return false
   }
 
-  const filterByDateRange = (item) => {
+  const filterByDateRange = item => {
     if (!filters.dateRange || filters.dateRange.length !== 2) return true
     if (!item.date) return true
     const start = filters.dateRange[0].startOf('day')
@@ -131,99 +103,47 @@ export default function Home() {
     return itemDate.isBetween(start, end, null, '[]')
   }
 
-  const filteredTransfers = useMemo(
-    () => transfers.filter(t => filterByBase(t) && filterByAssetType(t)),
-    [filters.base, filters.assetType, transfers]
-  )
-  const filteredPurchases = useMemo(
-    () => purchases.filter(p => filterByBase(p) && filterByAssetType(p)),
-    [filters.base, filters.assetType, purchases]
-  )
-  const filteredAssignments = useMemo(
-    () => assignments.filter(a => filterByBase(a) && filterByAssetType(a)),
-    [filters.base, filters.assetType, assignments]
-  )
-  const filteredExpenditures = useMemo(
-    () => expenditures.filter(e => filterByBase(e) && filterByAssetType(e) && filterByDateRange(e)),
-    [filters.base, filters.assetType, filters.dateRange, expenditures]
-  )
+  const filteredTransfers = useMemo(() => transfers.filter(t => filterByBase(t) && filterByAssetType(t)), [filters.base, filters.assetType, transfers])
+  const filteredPurchases = useMemo(() => purchases.filter(p => filterByBase(p) && filterByAssetType(p)), [filters.base, filters.assetType, purchases])
+  const filteredAssignments = useMemo(() => assignments.filter(a => filterByBase(a) && filterByAssetType(a)), [filters.base, filters.assetType, assignments])
+  const filteredExpenditures = useMemo(() => expenditures.filter(e => filterByBase(e) && filterByAssetType(e) && filterByDateRange(e)), [filters.base, filters.assetType, filters.dateRange, expenditures])
 
   const filteredStats = useMemo(() => {
     const expendedQuantity = filteredExpenditures.reduce((sum, e) => sum + (e.quantity || 0), 0)
     const assignedQuantity = filteredAssignments.reduce((sum, a) => sum + (a.quantity || 0), 0)
-    const availableQuantity =
-      filteredTransfers.reduce((sum, t) => sum + (t.quantity || 0), 0) +
-      filteredPurchases.reduce((sum, p) => sum + (p.quantity || 0), 0) -
-      assignedQuantity -
-      expendedQuantity
+    const availableQuantity = filteredTransfers.reduce((sum, t) => sum + (t.quantity || 0), 0) + filteredPurchases.reduce((sum, p) => sum + (p.quantity || 0), 0) - assignedQuantity - expendedQuantity
     const totalAssetsCalc = availableQuantity + assignedQuantity + expendedQuantity
-    return {
-      totalAssets: totalAssetsCalc,
-      available: availableQuantity,
-      assigned: assignedQuantity,
-      expended: expendedQuantity,
-    }
+    return { totalAssets: totalAssetsCalc, available: availableQuantity, assigned: assignedQuantity, expended: expendedQuantity }
   }, [filteredTransfers, filteredPurchases, filteredAssignments, filteredExpenditures])
 
   const filteredPieData = useMemo(() => {
     const counts = {}
-    ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach((item) => {
-      const key = item.assetType || 'Other'
-      counts[key] = (counts[key] || 0) + (item.quantity || 1)
-    })
-    return {
-      labels: Object.keys(counts),
-      datasets: [
-        {
-          label: 'Assets by Type',
-          data: Object.values(counts),
-          backgroundColor: ['#3366FF', '#28B463', '#F5B041', '#CCCCCC'].slice(0, Object.keys(counts).length),
-        },
-      ],
-    }
+      ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach(item => {
+        const key = item.assetType || 'Other'
+        counts[key] = (counts[key] || 0) + (item.quantity || 1)
+      })
+    return { labels: Object.keys(counts), datasets: [{ label: 'Assets by Type', data: Object.values(counts), backgroundColor: ['#3366FF', '#28B463', '#F5B041', '#CCCCCC'].slice(0, Object.keys(counts).length) }] }
   }, [filteredTransfers, filteredPurchases, filteredAssignments, filteredExpenditures])
 
   const filteredBarData = useMemo(() => {
     const availableMap = {}
     const assignedMap = {}
-    ;[...filteredTransfers, ...filteredPurchases].forEach((item) => {
-      const key = item.assetType || 'Other'
-      availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
-    })
-    filteredAssignments.forEach((item) => {
+      ;[...filteredTransfers, ...filteredPurchases].forEach(item => {
+        const key = item.assetType || 'Other'
+        availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
+      })
+    filteredAssignments.forEach(item => {
       const key = item.assetType || 'Other'
       assignedMap[key] = (assignedMap[key] || 0) + (item.quantity || 0)
     })
     const labels = Array.from(new Set([...Object.keys(availableMap), ...Object.keys(assignedMap)]))
-    const availableData = labels.map((l) => availableMap[l] || 0)
-    const assignedData = labels.map((l) => assignedMap[l] || 0)
-    return {
-      labels,
-      datasets: [
-        { label: 'Available', data: availableData, backgroundColor: '#28B463' },
-        { label: 'Assigned', data: assignedData, backgroundColor: '#F5B041' },
-      ],
-    }
+    const availableData = labels.map(l => availableMap[l] || 0)
+    const assignedData = labels.map(l => assignedMap[l] || 0)
+    return { labels, datasets: [{ label: 'Available', data: availableData, backgroundColor: '#28B463' }, { label: 'Assigned', data: assignedData, backgroundColor: '#F5B041' }] }
   }, [filteredTransfers, filteredPurchases, filteredAssignments])
 
-  const pieOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      title: { display: false },
-    },
-  }
-
-  const barOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      title: { display: false },
-    },
-    scales: { y: { beginAtZero: true } },
-  }
+  const pieOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, title: { display: false } } }
+  const barOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, title: { display: false } }, scales: { y: { beginAtZero: true } } }
 
   const columns = {
     transfers: [
@@ -236,25 +156,13 @@ export default function Home() {
       { title: 'ASSET', dataIndex: 'asset', key: 'asset', width: 150 },
       { title: 'BASE', dataIndex: 'base', key: 'base', width: 130 },
       { title: 'QUANTITY', dataIndex: 'quantity', key: 'quantity', width: 100 },
-      {
-        title: 'STATUS',
-        dataIndex: 'status',
-        key: 'status',
-        width: 120,
-        render: (val) => <Tag color="green">{val}</Tag>,
-      },
+      { title: 'STATUS', dataIndex: 'status', key: 'status', width: 120, render: val => <Tag color="green">{val}</Tag> },
     ],
     assignments: [
       { title: 'ASSET', dataIndex: 'asset', key: 'asset', width: 150 },
       { title: 'ASSIGNED TO', dataIndex: 'assignedTo', key: 'assignedTo', width: 140 },
       { title: 'QUANTITY', dataIndex: 'quantity', key: 'quantity', width: 100 },
-      {
-        title: 'STATUS',
-        dataIndex: 'status',
-        key: 'status',
-        width: 120,
-        render: (val) => <Tag color="blue">{val}</Tag>,
-      },
+      { title: 'STATUS', dataIndex: 'status', key: 'status', width: 120, render: val => <Tag color="blue">{val}</Tag> },
     ],
     expenditures: [
       { title: 'ASSET', dataIndex: 'asset', key: 'asset', width: 150 },
@@ -265,10 +173,9 @@ export default function Home() {
   }
 
   const { transfers: columnsTransfers, purchases: columnsPurchases, assignments: columnsAssignments, expenditures: columnsExpenditures } = columns
-
-  const handleBaseChange = (value) => setFilters(f => ({ ...f, base: value || 'all' }))
-  const handleAssetTypeChange = (value) => setFilters(f => ({ ...f, assetType: value || 'all' }))
-  const handleDateRangeChange = (dates) => setFilters(f => ({ ...f, dateRange: dates || [] }))
+  const handleBaseChange = value => setFilters(f => ({ ...f, base: value || 'all' }))
+  const handleAssetTypeChange = value => setFilters(f => ({ ...f, assetType: value || 'all' }))
+  const handleDateRangeChange = dates => setFilters(f => ({ ...f, dateRange: dates || [] }))
 
   return (
     <Spin spinning={loading}>
@@ -312,47 +219,19 @@ export default function Home() {
             />
           </div>
         </div>
-        <Row gutter={[16, 16]} className="mb-6">
-          <Col xs={24} sm={12} md={6}>
-            <Card className="rounded-2xl shadow-sm min-h-28">
-              <div className="flex gap-3 items-center">
-                <div className="bg-blue-600 rounded-lg w-12 h-12 flex items-center justify-center">
-                  <AppstoreOutlined className="text-white text-2xl" />
+        <Row gutter={[16, 16]} className="mb-6" align="stretch">
+          {[{ title: 'Total Assets', value: filteredStats.totalAssets, icon: <AppstoreOutlined />, color: 'bg-blue-600', valueColor: '#3366FF' }, { title: 'Available', value: filteredStats.available, icon: <LineChartOutlined />, color: 'bg-green-600', valueColor: '#28B463' }, { title: 'Assigned', value: filteredStats.assigned, icon: <TeamOutlined />, color: 'bg-yellow-400', valueColor: '#F5B041' }, { title: 'Expended', value: filteredStats.expended, icon: <FireOutlined />, color: 'bg-red-700', valueColor: '#CB4335' }].map((stat, idx) => (
+            <Col xs={24} sm={12} md={6} key={idx} style={{ display: 'flex' }}>
+              <Card className="rounded-2xl shadow-sm w-full" style={{ flex: 1 }}>
+                <div className="flex gap-3 items-center h-full">
+                  <div className={`${stat.color} rounded-lg w-12 h-12 flex items-center justify-center`}>
+                    {React.cloneElement(stat.icon, { className: 'text-white text-2xl' })}
+                  </div>
+                  <Statistic title={stat.title} value={stat.value} valueStyle={{ color: stat.valueColor, fontWeight: 700 }} />
                 </div>
-                <Statistic title="Total Assets" value={filteredStats.totalAssets} valueStyle={{ color: '#3366FF', fontWeight: 700 }} />
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card className="rounded-2xl shadow-sm min-h-28">
-              <div className="flex gap-3 items-center">
-                <div className="bg-green-600 rounded-lg w-12 h-12 flex items-center justify-center">
-                  <LineChartOutlined className="text-white text-2xl" />
-                </div>
-                <Statistic title="Available" value={filteredStats.available} valueStyle={{ color: '#28B463', fontWeight: 700 }} />
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card className="rounded-2xl shadow-sm min-h-28">
-              <div className="flex gap-3 items-center">
-                <div className="bg-yellow-400 rounded-lg w-12 h-12 flex items-center justify-center">
-                  <TeamOutlined className="text-white text-2xl" />
-                </div>
-                <Statistic title="Assigned" value={filteredStats.assigned} valueStyle={{ color: '#F5B041', fontWeight: 700 }} />
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Card className="rounded-2xl shadow-sm min-h-28">
-              <div className="flex gap-3 items-center">
-                <div className="bg-red-700 rounded-lg w-12 h-12 flex items-center justify-center">
-                  <FireOutlined className="text-white text-2xl" />
-                </div>
-                <Statistic title="Expended" value={filteredStats.expended} valueStyle={{ color: '#CB4335', fontWeight: 700 }} />
-              </div>
-            </Card>
-          </Col>
+              </Card>
+            </Col>
+          ))}
         </Row>
         <Row gutter={[16, 16]} className="mb-10">
           <Col xs={24} md={12}>
@@ -373,22 +252,22 @@ export default function Home() {
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
             <Card title="Recent Transfers" className="rounded-2xl shadow-md overflow-hidden">
-              <Table dataSource={filteredTransfers} columns={columnsTransfers} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
+              <Table dataSource={filteredTransfers} columns={columns.transfers} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
           <Col xs={24} lg={12}>
             <Card title="Recent Purchases" className="rounded-2xl shadow-md overflow-hidden">
-              <Table dataSource={filteredPurchases} columns={columnsPurchases} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
+              <Table dataSource={filteredPurchases} columns={columns.purchases} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
           <Col xs={24} lg={12}>
             <Card title="Recent Assignments" className="rounded-2xl shadow-md overflow-hidden">
-              <Table dataSource={filteredAssignments} columns={columnsAssignments} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
+              <Table dataSource={filteredAssignments} columns={columns.assignments} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
           <Col xs={24} lg={12}>
             <Card title="Recent Expenditures" className="rounded-2xl shadow-md overflow-hidden">
-              <Table dataSource={filteredExpenditures} columns={columnsExpenditures} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
+              <Table dataSource={filteredExpenditures} columns={columns.expenditures} rowKey={(record, idx) => idx} scroll={{ x: 500 }} pagination={{ pageSize: 5 }} />
             </Card>
           </Col>
         </Row>

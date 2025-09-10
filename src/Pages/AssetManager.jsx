@@ -9,12 +9,12 @@ const typeOptions = ["Vehicle", "Weapon", "Ammunition", "Equipment", "Other"];
 const AssetFilterModal = ({ show, onClose, base, setBase, type, setType, search, setSearch, onReset, onApply }) => {
   if (!show) return null;
   return (
-    <div className="bg-white rounded-lg shadow p-6 mb-6 flex flex-col gap-6 w-full max-w-full md:max-w-6xl mx-auto relative">
+    <div className="bg-white rounded-lg shadow p-4 sm:p-6 lg:p-8 mb-6 flex flex-col gap-6 w-full max-w-full md:max-w-6xl mx-auto relative">
       <button aria-label="Close" onClick={onClose} className="absolute top-4 right-4 text-gray-700 hover:text-gray-900">
         ✕
       </button>
-      <h2 className="text-xl font-bold tracking-tight">Filters</h2>
-      <form className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+      <h2 className="text-lg sm:text-xl font-bold tracking-tight">Filters</h2>
+      <form className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
         <div className="flex flex-col">
           <label className="text-gray-700 font-semibold mb-1">Base</label>
           <select className="border border-gray-300 rounded-lg px-3 py-2" value={base} onChange={e => setBase(e.target.value)}>
@@ -45,23 +45,23 @@ const AssetFilterModal = ({ show, onClose, base, setBase, type, setType, search,
 const AssetFormPage = ({ show, onClose, onSubmit, errorState, assetForm, setAssetForm }) => {
   if (!show) return null;
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-10 flex justify-center items-start">
-      <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 max-w-lg w-full border border-gray-300">
-        <div className="flex items-center gap-3 mb-6 sm:mb-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 lg:p-12 flex justify-center items-start">
+      <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 lg:p-8 max-w-lg w-full border border-gray-300">
+        <div className="flex items-center gap-3 mb-4 sm:mb-6 lg:mb-8">
           <button onClick={onClose} className="text-blue-700 hover:text-blue-900">←</button>
-          <h1 className="text-xl sm:text-2xl font-bold">{assetForm.id ? "Edit Asset" : "Create New Asset"}</h1>
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold">{assetForm.id ? "Edit Asset" : "Create New Asset"}</h1>
         </div>
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
           <div>
             <label className="block mb-2 font-semibold text-gray-700">Asset Name</label>
             <input type="text" placeholder="Enter asset name" value={assetForm.name} onChange={e => setAssetForm({ ...assetForm, name: e.target.value })}
-              className={`w-full rounded-lg border px-4 py-3 ${errorState.name ? "border-red-600" : "border-gray-300"} focus:border-blue-600`} />
+              className={`w-full rounded-lg border px-4 py-3 text-sm sm:text-base ${errorState.name ? "border-red-600" : "border-gray-300"} focus:border-blue-600`} />
             {errorState.name && <p className="text-red-600 text-sm mt-1">{errorState.name}</p>}
           </div>
           <div>
             <label className="block mb-2 font-semibold text-gray-700">Asset Type</label>
             <select value={assetForm.type} onChange={e => setAssetForm({ ...assetForm, type: e.target.value })}
-              className={`w-full rounded-lg border px-4 py-3 ${errorState.type ? "border-red-600" : "border-gray-300"} focus:border-blue-600`}>
+              className={`w-full rounded-lg border px-4 py-3 text-sm sm:text-base ${errorState.type ? "border-red-600" : "border-gray-300"} focus:border-blue-600`}>
               <option value="">Select Type</option>
               {typeOptions.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -70,7 +70,7 @@ const AssetFormPage = ({ show, onClose, onSubmit, errorState, assetForm, setAsse
           <div>
             <label className="block mb-2 font-semibold text-gray-700">Base</label>
             <select value={assetForm.base} onChange={e => setAssetForm({ ...assetForm, base: e.target.value })}
-              className={`w-full rounded-lg border px-4 py-3 ${errorState.base ? "border-red-600" : "border-gray-300"} focus:border-blue-600`}>
+              className={`w-full rounded-lg border px-4 py-3 text-sm sm:text-base ${errorState.base ? "border-red-600" : "border-gray-300"} focus:border-blue-600`}>
               <option value="">Select Base</option>
               {baseOptions.map(b => <option key={b} value={b}>{b}</option>)}
             </select>
@@ -79,7 +79,7 @@ const AssetFormPage = ({ show, onClose, onSubmit, errorState, assetForm, setAsse
           <div>
             <label className="block mb-2 font-semibold text-gray-700">Opening Balance</label>
             <input type="number" min="0" value={assetForm.available} onChange={e => setAssetForm({ ...assetForm, available: e.target.value })}
-              className={`w-full rounded-lg border px-4 py-3 ${errorState.available ? "border-red-600" : "border-gray-300"} focus:border-blue-600`} />
+              className={`w-full rounded-lg border px-4 py-3 text-sm sm:text-base ${errorState.available ? "border-red-600" : "border-gray-300"} focus:border-blue-600`} />
             {errorState.available && <p className="text-red-600 text-sm mt-1">{errorState.available}</p>}
           </div>
           <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
@@ -180,14 +180,14 @@ const AssetManager = () => {
   const pagedAssets = assets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="max-w-full sm:max-w-7xl mx-auto mt-6 px-2 sm:px-4 font-sans">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#181C32]">Assets</h1>
-        <div className="flex flex-wrap items-center gap-3">
-          <button onClick={() => setShowFilter(v => !v)} className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50">
-            <FunnelIcon className="w-5 h-5" /> Filters
+    <div className="max-w-full sm:max-w-7xl mx-auto mt-4 sm:mt-6 px-2 sm:px-4 lg:px-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#181C32]">Assets</h1>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <button onClick={() => setShowFilter(v => !v)} className="flex items-center gap-1 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold border border-[#CBD2E0] bg-white hover:bg-gray-50">
+            <FunnelIcon className="w-4 h-4 sm:w-5 sm:h-5" /> Filters
           </button>
-          <button onClick={openAddForm} className="flex items-center gap-1 bg-[#198CF7] text-white px-4 py-2 sm:px-5 sm:py-2 rounded-lg font-bold shadow-sm hover:bg-[#136BFE]">
+          <button onClick={openAddForm} className="flex items-center gap-1 bg-[#198CF7] text-white px-3 sm:px-5 py-2 rounded-lg text-sm sm:text-base font-bold shadow-sm hover:bg-[#136BFE]">
             <PlusIcon className="w-4 h-4" /> Add Asset
           </button>
         </div>
@@ -198,16 +198,16 @@ const AssetManager = () => {
       <AssetFormPage show={showFormPage} onClose={closeForm} onSubmit={submitForm} errorState={errorState} assetForm={editForm} setAssetForm={setEditForm} />
 
       <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-x-auto">
-        <table className="w-full border-collapse text-left text-xs sm:text-sm text-[#182233]">
+        <table className="w-full border-collapse text-left text-xs sm:text-sm md:text-base text-[#182233]">
           <thead>
-            <tr className="bg-[#FAFAFB] text-[#181C32] font-bold border-b border-gray-300 text-xs sm:text-sm">
-              <th className="px-2 sm:px-3 py-3 sm:py-4">NAME</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4">TYPE</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4">BASE</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4">AVAILABLE</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4">ASSIGNED</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4">STATUS</th>
-              <th className="px-2 sm:px-3 py-3 sm:py-4 text-right">ACTIONS</th>
+            <tr className="bg-[#FAFAFB] text-[#181C32] font-bold border-b border-gray-300 text-xs sm:text-sm md:text-base">
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">NAME</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">TYPE</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">BASE</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">AVAILABLE</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">ASSIGNED</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">STATUS</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-right">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -217,18 +217,18 @@ const AssetManager = () => {
               </tr>
             ) : (
               pagedAssets.map(asset => (
-                <tr key={asset.id} className="even:bg-gray-50 hover:bg-blue-50 text-xs sm:text-sm">
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 text-blue-600 font-semibold underline cursor-pointer">{asset.name}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4">{asset.type}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4">{asset.base}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4">{asset.available}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4">{asset.assigned ?? 0}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4">{asset.status}</td>
-                  <td className="px-2 sm:px-3 py-3 sm:py-4 text-right">
-                    <div className="flex gap-2 sm:gap-4 justify-end flex-wrap">
-                      <button onClick={() => alert(`View ${asset.name}`)} className="text-blue-600 font-semibold text-xs sm:text-sm hover:underline">View</button>
-                      <button onClick={() => openEditForm(asset)} className="text-blue-800 font-semibold text-xs sm:text-sm hover:underline">Edit</button>
-                      <button onClick={() => removeAsset(asset.id)} className="text-red-600 font-semibold text-xs sm:text-sm hover:underline">Delete</button>
+                <tr key={asset.id} className="even:bg-gray-50 hover:bg-blue-50 text-xs sm:text-sm md:text-base">
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-blue-600 font-semibold underline cursor-pointer">{asset.name}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.type}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.base}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.available}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.assigned ?? 0}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.status}</td>
+                  <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-right">
+                    <div className="flex gap-2 sm:gap-3 md:gap-4 justify-end flex-wrap">
+                      <button onClick={() => alert(`View ${asset.name}`)} className="text-blue-600 font-semibold text-xs sm:text-sm md:text-base hover:underline">View</button>
+                      <button onClick={() => openEditForm(asset)} className="text-blue-800 font-semibold text-xs sm:text-sm md:text-base hover:underline">Edit</button>
+                      <button onClick={() => removeAsset(asset.id)} className="text-red-600 font-semibold text-xs sm:text-sm md:text-base hover:underline">Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -239,10 +239,10 @@ const AssetManager = () => {
       </div>
 
       {assets.length > PAGE_SIZE && (
-        <div className="flex justify-center items-center mt-4 gap-3 text-sm sm:text-base">
-          <button disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="px-3 sm:px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Prev</button>
+        <div className="flex justify-center items-center mt-4 gap-2 sm:gap-3 md:gap-4 text-xs sm:text-sm md:text-base">
+          <button disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 bg-gray-200 rounded disabled:opacity-50">Prev</button>
           <span>Page {page} of {Math.ceil(assets.length / PAGE_SIZE)}</span>
-          <button disabled={page === Math.ceil(assets.length / PAGE_SIZE)} onClick={() => setPage(p => Math.min(Math.ceil(assets.length / PAGE_SIZE), p + 1))} className="px-3 sm:px-4 py-2 bg-gray-200 rounded disabled:opacity-50">Next</button>
+          <button disabled={page === Math.ceil(assets.length / PAGE_SIZE)} onClick={() => setPage(p => Math.min(Math.ceil(assets.length / PAGE_SIZE), p + 1))} className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 bg-gray-200 rounded disabled:opacity-50">Next</button>
         </div>
       )}
     </div>

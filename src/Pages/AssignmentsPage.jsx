@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { FunnelIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { getAssignments, createAssignment } from '../Api'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const BASES = ['All Bases', 'Base Alpha', 'Base Bravo']
 const TYPES = ['All Types', 'Weapon', 'Vehicle']
@@ -100,13 +102,15 @@ export default function AssignmentsPage() {
         endDate: '',
       })
       setFormErrors({})
+      toast.success('Assignment added successfully')
     } catch {
-      alert('Failed to add assignment')
+      toast.error('Failed to add assignment')
     }
   }
 
   return (
     <div className="max-w-full xl:max-w-[1200px] mx-auto mt-6 px-3 sm:px-4 md:px-6 lg:px-8 font-sans">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-2xl md:text-3xl font-bold text-[#181C32]">Assignments</h1>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">

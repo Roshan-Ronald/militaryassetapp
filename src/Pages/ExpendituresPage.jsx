@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from "react"
 import { FunnelIcon, PlusIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import { getExpenditures, createExpenditure } from "../Api"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const BASES = ["All Bases", "Base Alpha", "Bravo"]
 const TYPES = ["All Types", "Ammunition", "Vehicle"]
 const REASONS = ["All Reasons", "Training", "Operation", "Routine", "Other"]
 const PAGE_SIZE = 10
+const STORAGE_NOTIFICATIONS_KEY = "notificationsData"
 
 function getTodayDMY() {
   const d = new Date()
   return `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`
+}
+
+function saveNotification(message, type = "info") {
+  const existing = JSON.parse(localStorage.getItem(STORAGE_NOTIFICATIONS_KEY)) || []
+  const newNote = {
+    id: Date.now(),
+    message,
+    type,
+    date: new Date().toLocaleString()
+  }
+  const updated = [newNote, ...existing]
+  localStorage.setItem(STORAGE_NOTIFICATIONS_KEY, JSON.stringify(updated))
 }
 
 export default function ExpendituresPage() {
@@ -138,25 +153,34 @@ export default function ExpendituresPage() {
       date: formattedDate,
       location: form.location
     }
-    await createExpenditure(expenditure)
-    const updated = await getExpenditures()
-    setRows(updated)
-    setShowForm(false)
-    setForm({
-      asset: "",
-      assetType: "",
-      base: "",
-      quantity: 1,
-      reason: "",
-      notes: "",
-      expendedByName: "",
-      expendedByRank: "",
-      expendedById: "",
-      date: getTodayDMY(),
-      location: ""
-    })
-    setErrors({})
-    setPage(1)
+
+    try {
+      await createExpenditure(expenditure)
+      const updated = await getExpenditures()
+      setRows(updated)
+      setShowForm(false)
+      setForm({
+        asset: "",
+        assetType: "",
+        base: "",
+        quantity: 1,
+        reason: "",
+        notes: "",
+        expendedByName: "",
+        expendedByRank: "",
+        expendedById: "",
+        date: getTodayDMY(),
+        location: ""
+      })
+      setErrors({})
+      setPage(1)
+
+      toast.success("Expenditure added successfully ✅")
+      saveNotification(`New expenditure added: ${expenditure.asset}`, "success")
+    } catch (err) {
+      toast.error("Failed to add expenditure ❌")
+      saveNotification("Failed to add expenditure", "error")
+    }
   }
 
   return (

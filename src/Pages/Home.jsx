@@ -6,7 +6,6 @@ import { Pie, Bar } from 'react-chartjs-2'
 import { AppstoreOutlined, LineChartOutlined, TeamOutlined, FireOutlined } from '@ant-design/icons'
 import { useLocation } from 'react-router-dom'
 
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PieController)
 const { RangePicker } = DatePicker
 
@@ -77,6 +76,7 @@ export default function Home() {
     setAssignments(storedAssignments)
     setExpenditures(storedExpenditures)
     setLoading(false)
+    message.info("Dashboard data loaded successfully!")
   }, [])
 
   const filterByBase = item => {
@@ -118,20 +118,20 @@ export default function Home() {
 
   const filteredPieData = useMemo(() => {
     const counts = {}
-      ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach(item => {
-        const key = item.assetType || 'Other'
-        counts[key] = (counts[key] || 0) + (item.quantity || 1)
-      })
+    ;[...filteredTransfers, ...filteredPurchases, ...filteredAssignments, ...filteredExpenditures].forEach(item => {
+      const key = item.assetType || 'Other'
+      counts[key] = (counts[key] || 0) + (item.quantity || 1)
+    })
     return { labels: Object.keys(counts), datasets: [{ label: 'Assets by Type', data: Object.values(counts), backgroundColor: ['#3366FF', '#28B463', '#F5B041', '#CCCCCC'].slice(0, Object.keys(counts).length) }] }
   }, [filteredTransfers, filteredPurchases, filteredAssignments, filteredExpenditures])
 
   const filteredBarData = useMemo(() => {
     const availableMap = {}
     const assignedMap = {}
-      ;[...filteredTransfers, ...filteredPurchases].forEach(item => {
-        const key = item.assetType || 'Other'
-        availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
-      })
+    ;[...filteredTransfers, ...filteredPurchases].forEach(item => {
+      const key = item.assetType || 'Other'
+      availableMap[key] = (availableMap[key] || 0) + (item.quantity || 0)
+    })
     filteredAssignments.forEach(item => {
       const key = item.assetType || 'Other'
       assignedMap[key] = (assignedMap[key] || 0) + (item.quantity || 0)
@@ -173,9 +173,23 @@ export default function Home() {
   }
 
   const { transfers: columnsTransfers, purchases: columnsPurchases, assignments: columnsAssignments, expenditures: columnsExpenditures } = columns
-  const handleBaseChange = value => setFilters(f => ({ ...f, base: value || 'all' }))
-  const handleAssetTypeChange = value => setFilters(f => ({ ...f, assetType: value || 'all' }))
-  const handleDateRangeChange = dates => setFilters(f => ({ ...f, dateRange: dates || [] }))
+
+  const handleBaseChange = value => {
+    setFilters(f => ({ ...f, base: value || 'all' }))
+    message.success(`Filter applied: Base = ${value || 'All'}`)
+  }
+  const handleAssetTypeChange = value => {
+    setFilters(f => ({ ...f, assetType: value || 'all' }))
+    message.success(`Filter applied: Asset Type = ${value || 'All'}`)
+  }
+  const handleDateRangeChange = dates => {
+    setFilters(f => ({ ...f, dateRange: dates || [] }))
+    if (dates && dates.length === 2) {
+      message.success(`Filter applied: Date Range = ${dates[0].format('DD-MM-YYYY')} to ${dates[1].format('DD-MM-YYYY')}`)
+    } else {
+      message.success(`Date range filter cleared`)
+    }
+  }
 
   return (
     <Spin spinning={loading}>
@@ -184,39 +198,15 @@ export default function Home() {
         <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-stretch bg-white p-4 rounded-xl mb-6 shadow-md">
           <div className="flex flex-col gap-1 min-w-[160px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Base</label>
-            <Select
-              className="w-full rounded-md border border-gray-300 bg-gray-50"
-              options={baseOptions}
-              value={filters.base}
-              onChange={handleBaseChange}
-              showSearch
-              placeholder="Select Base"
-              popupClassName="custom-select-dropdown"
-              allowClear
-            />
+            <Select className="w-full rounded-md border border-gray-300 bg-gray-50" options={baseOptions} value={filters.base} onChange={handleBaseChange} showSearch placeholder="Select Base" popupClassName="custom-select-dropdown" allowClear />
           </div>
           <div className="flex flex-col gap-1 min-w-[160px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Asset Type</label>
-            <Select
-              className="w-full rounded-md border border-gray-300 bg-gray-50"
-              options={assetTypeOptions}
-              value={filters.assetType}
-              onChange={handleAssetTypeChange}
-              showSearch
-              placeholder="Select Asset Type"
-              popupClassName="custom-select-dropdown"
-              allowClear
-            />
+            <Select className="w-full rounded-md border border-gray-300 bg-gray-50" options={assetTypeOptions} value={filters.assetType} onChange={handleAssetTypeChange} showSearch placeholder="Select Asset Type" popupClassName="custom-select-dropdown" allowClear />
           </div>
           <div className="flex flex-col gap-1 min-w-[220px] flex-1">
             <label className="font-semibold text-sm text-gray-800">Date Range</label>
-            <RangePicker
-              format="DD-MM-YYYY"
-              className="w-full rounded-md border border-gray-300 bg-gray-50"
-              onChange={handleDateRangeChange}
-              value={filters.dateRange}
-              allowClear
-            />
+            <RangePicker format="DD-MM-YYYY" className="w-full rounded-md border border-gray-300 bg-gray-50" onChange={handleDateRangeChange} value={filters.dateRange} allowClear />
           </div>
         </div>
         <Row gutter={[16, 16]} className="mb-6" align="stretch">

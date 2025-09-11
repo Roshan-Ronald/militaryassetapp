@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { getUsers, createUser, updateUser } from '../Api'
 import { FunnelIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const ROLE_OPTIONS = ['All Roles', 'Admin', 'Base Commander', 'Logistics Officer']
 const BASE_OPTIONS = ['All Bases', 'N/A', 'Base Alpha', 'Base Bravo']
@@ -14,7 +16,13 @@ const ROLE_BADGES = {
 
 const STATUS_BADGES = {
   Active: 'bg-green-100 text-green-700',
-  Inactive: 'bg-gray-100 text-gray-500',
+  Inactive: 'bg-red-100 text-red-700',
+}
+
+const saveNotification = (notification) => {
+  const stored = JSON.parse(localStorage.getItem('notifications') || '[]')
+  stored.push(notification)
+  localStorage.setItem('notifications', JSON.stringify(stored))
 }
 
 export default function UsersPage() {
@@ -95,6 +103,13 @@ export default function UsersPage() {
       setUsers(updated)
       setEditIndex(null)
       setEditErrors({})
+      const notification = {
+        message: `User updated: ${editForm.name} (${editForm.username})`,
+        type: 'success',
+        date: new Date().toLocaleString(),
+      }
+      toast.success(notification.message)
+      saveNotification(notification)
     } catch (error) {
       alert(error.message)
     }
@@ -117,6 +132,13 @@ export default function UsersPage() {
       await updateUser(user.username, { status: newStatus })
       const updated = await getUsers()
       setUsers(updated)
+      const notification = {
+        message: `User ${user.name} is now ${newStatus}`,
+        type: newStatus === 'Active' ? 'success' : 'error',
+        date: new Date().toLocaleString(),
+      }
+      toast[notification.type === 'success' ? 'success' : 'error'](notification.message)
+      saveNotification(notification)
     } catch (error) {
       alert(error.message)
     }
@@ -159,6 +181,13 @@ export default function UsersPage() {
       })
       setAddFormErr({})
       setPage(1)
+      const notification = {
+        message: `User created: ${addForm.name} (${addForm.username})`,
+        type: 'success',
+        date: new Date().toLocaleString(),
+      }
+      toast.success(notification.message)
+      saveNotification(notification)
     } catch (error) {
       alert(error.message)
     }
@@ -166,6 +195,8 @@ export default function UsersPage() {
 
   return (
     <div className="min-h-screen p-3 sm:p-4 max-w-7xl mx-auto font-sans">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between mb-6 gap-3">
         <h1 className="text-2xl sm:text-3xl font-bold">Users</h1>
         <div className="flex gap-2">
@@ -188,6 +219,7 @@ export default function UsersPage() {
         </div>
       </div>
 
+      {/* Filters */}
       {showFilter && (
         <form className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-white p-4 rounded shadow">
           <div>
@@ -253,6 +285,7 @@ export default function UsersPage() {
         </form>
       )}
 
+      {/* Add User Modal */}
       {showAdd && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white rounded shadow-lg p-4 sm:p-6 max-w-md w-full relative">
@@ -319,17 +352,18 @@ export default function UsersPage() {
         </div>
       )}
 
-      <div className="overflow-auto rounded border border-gray-300 bg-white">
+      {/* Users Table */}
+      <div className="overflow-auto rounded border border-gray-300 bg-white shadow-sm">
         <table className="w-full text-xs sm:text-sm table-auto border-collapse font-sans text-gray-900">
           <thead className="bg-gray-100 font-semibold uppercase text-[10px] sm:text-xs">
             <tr>
-              <th className="p-2 sm:p-3 border border-gray-300">Name</th>
-              <th className="p-2 sm:p-3 border border-gray-300">Username</th>
-              <th className="p-2 sm:p-3 border border-gray-300">Email</th>
-              <th className="p-2 sm:p-3 border border-gray-300">Role</th>
-              <th className="p-2 sm:p-3 border border-gray-300">Base</th>
-              <th className="p-2 sm:p-3 border border-gray-300">Status</th>
-              <th className="p-2 sm:p-3 border border-gray-300 text-right">Actions</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Name</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Username</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Email</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Role</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Base</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">Status</th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -341,7 +375,7 @@ export default function UsersPage() {
               paged.map((user, idx) => {
                 const overallIndex = (page - 1) * perPage + idx
                 return (
-                  <tr key={user.username || idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <tr key={user.username || idx} className={`hover:bg-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                     {editIndex === overallIndex ? (
                       <>
                         <td className="p-1 sm:p-2 border border-gray-300">
@@ -409,17 +443,17 @@ export default function UsersPage() {
                       </>
                     ) : (
                       <>
-                        <td className="p-2 sm:p-3 border border-gray-300">{user.name}</td>
-                        <td className="p-2 sm:p-3 border border-gray-300">{user.username}</td>
-                        <td className="p-2 sm:p-3 border border-gray-300">{user.email}</td>
-                        <td className="p-2 sm:p-3 border border-gray-300">
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{user.name}</td>
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{user.username}</td>
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{user.email}</td>
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">
                           <span className={`px-2 py-1 rounded text-xs sm:text-sm ${ROLE_BADGES[user.role] || ''}`}>{user.role}</span>
                         </td>
-                        <td className="p-2 sm:p-3 border border-gray-300">{user.base}</td>
-                        <td className="p-2 sm:p-3 border border-gray-300">
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{user.base}</td>
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">
                           <span className={`px-2 py-1 rounded text-xs sm:text-sm ${STATUS_BADGES[user.status] || ''}`}>{user.status}</span>
                         </td>
-                        <td className="p-2 sm:p-3 border border-gray-300 text-right flex gap-2 justify-end">
+                        <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-right flex gap-2 justify-end">
                           <button onClick={() => startEdit(overallIndex)} className="px-2 sm:px-3 py-1 border rounded text-xs sm:text-sm hover:bg-gray-100">
                             Edit
                           </button>
@@ -437,6 +471,7 @@ export default function UsersPage() {
         </table>
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-4 text-xs sm:text-sm">
         <div>Page {page} of {totalPages}</div>
         <div className="flex gap-2">

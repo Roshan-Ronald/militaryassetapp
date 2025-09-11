@@ -113,7 +113,7 @@ function App() {
           )}
         </main>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
 
     </div>
   )

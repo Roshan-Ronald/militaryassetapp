@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FunnelIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import {  getPurchases,  createPurchase,} from "../Api";
+import { getPurchases, createPurchase } from "../Api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PAGE_SIZE = 10;
 const BASES = ['Base Alpha', 'Base Bravo'];
@@ -10,6 +12,12 @@ const STATUSES = ['Delivered', 'Pending', 'Cancelled'];
 function getToday() {
   const d = new Date();
   return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+}
+
+function saveNotification(notification) {
+  const stored = JSON.parse(localStorage.getItem("notifications") || "[]");
+  stored.push(notification);
+  localStorage.setItem("notifications", JSON.stringify(stored));
 }
 
 export default function PurchasesPage() {
@@ -106,6 +114,10 @@ export default function PurchasesPage() {
     });
     setShowNew(false);
     setPage(1);
+
+    const notification = { message: `New purchase added: ${purchase.asset}`, type: "success", date: new Date().toLocaleString() };
+    saveNotification(notification);
+    toast.success(notification.message);
   }
 
   return (
@@ -247,7 +259,8 @@ export default function PurchasesPage() {
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
     </div>
   );
 }
-

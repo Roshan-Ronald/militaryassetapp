@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FunnelIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { getAssets, getAssetById, createAsset, updateAsset, deleteAsset } from "../Api";
+import { FunnelIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {  getAssets,  getAssetById, createAsset,  updateAsset,  deleteAsset,} from "../Api";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PAGE_SIZE = 10;
 const baseOptions = ["Base Alpha", "Base Bravo", "Base Charlie", "Base Delta", "Base Echo"];
@@ -150,8 +152,10 @@ const AssetManager = () => {
 
     if (editForm.id) {
       await updateAsset(editForm.id, { ...editForm, available: Number(editForm.available), status: Number(editForm.available) > 0 ? "Sufficient" : "Insufficient" });
+      toast.info("Asset updated successfully");
     } else {
       await createAsset({ ...editForm, id: Date.now(), available: Number(editForm.available), assigned: 0, status: Number(editForm.available) > 0 ? "Sufficient" : "Insufficient" });
+      toast.success("Asset created successfully");
     }
     const data = await getAssets();
     setAssets(data);
@@ -161,6 +165,7 @@ const AssetManager = () => {
   const removeAsset = async (id) => {
     if (!window.confirm("Are you sure you want to delete this asset?")) return;
     await deleteAsset(id);
+    toast.error("Asset deleted");
     const data = await getAssets();
     setAssets(data);
   };
@@ -170,17 +175,20 @@ const AssetManager = () => {
     setTypeFilter("All Types");
     setSearchFilter("");
     setAppliedFilters({ base: "All Bases", type: "All Types", search: "" });
+    toast.info("Filters reset");
   };
 
   const handleApplyFilters = () => {
     setAppliedFilters({ base: baseFilter, type: typeFilter, search: searchFilter.trim() });
     setShowFilter(false);
+    toast.success("Filters applied");
   };
 
   const pagedAssets = assets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="max-w-full sm:max-w-7xl mx-auto mt-4 sm:mt-6 px-2 sm:px-4 lg:px-6 font-sans">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#181C32]">Assets</h1>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -226,7 +234,7 @@ const AssetManager = () => {
                   <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4">{asset.status}</td>
                   <td className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 text-right">
                     <div className="flex gap-2 sm:gap-3 md:gap-4 justify-end flex-wrap">
-                      <button onClick={() => alert(`View ${asset.name}`)} className="text-blue-600 font-semibold text-xs sm:text-sm md:text-base hover:underline">View</button>
+                      <button onClick={() => toast.info(`Viewing ${asset.name}`)} className="text-blue-600 font-semibold text-xs sm:text-sm md:text-base hover:underline">View</button>
                       <button onClick={() => openEditForm(asset)} className="text-blue-800 font-semibold text-xs sm:text-sm md:text-base hover:underline">Edit</button>
                       <button onClick={() => removeAsset(asset.id)} className="text-red-600 font-semibold text-xs sm:text-sm md:text-base hover:underline">Delete</button>
                     </div>

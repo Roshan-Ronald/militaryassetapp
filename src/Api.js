@@ -35,7 +35,6 @@ export async function deleteAsset(id) {
   return true;
 }
 
-
 // Transfers API
 const STORAGE_TRANSFERS_KEY = "transfersData";
 
@@ -72,8 +71,6 @@ export async function deleteTransfer(id) {
   localStorage.setItem(STORAGE_TRANSFERS_KEY, JSON.stringify(filtered));
   return true;
 }
-
-
 
 // Purchases API
 const STORAGE_PURCHASES_KEY = "purchasesData";
@@ -112,7 +109,6 @@ export async function deletePurchase(id) {
   return true;
 }
 
-
 // Assignments API
 const STORAGE_ASSIGNMENTS_KEY = "assignmentsData";
 
@@ -149,7 +145,6 @@ export async function deleteAssignment(id) {
   localStorage.setItem(STORAGE_ASSIGNMENTS_KEY, JSON.stringify(filteredAssignments));
   return true;
 }
-
 
 // Expenditures API
 const STORAGE_EXPENDITURES_KEY = "expendituresData";
@@ -188,7 +183,6 @@ export async function deleteExpenditure(id) {
   return true;
 }
 
-
 // Users API
 const STORAGE_USERS_KEY = "usersData";
 
@@ -202,7 +196,7 @@ export async function getUsers() {
     { name: "Logistics Officer 2", username: "logistics2", email: "logistics2@example.com", role: "Admin", base: "Bravo", status: "Active" },
     { name: "System Administrator", username: "gangad", email: "gangad@gmail.com", role: "Admin", base: "N/A", status: "Active" },
     { name: "System Administrator", username: "dharan", email: "dharan@gmail.com", role: "Admin", base: "N/A", status: "Active" },
-    { name: "ram", username: "ram", email: "ram@gmail.com", role: "Logistics Officer", base: "Base Alpha", status: "Active" },
+    { name: "ram", username: "ram", email: "ram@gmail.com", role: "Logistics Officer", base: "Base Alpha", status: "Active" }
   ];
 }
 
@@ -230,7 +224,7 @@ export async function deleteUser(username) {
   return true;
 }
 
-// Settings API 
+// Settings API
 const STORAGE_SETTINGS_KEY = "appSettings";
 const STORAGE_ASSETTYPES_KEY = "assetTypes";
 const STORAGE_BASES_KEY = "bases";
@@ -249,7 +243,7 @@ export async function getSettings() {
     version: '1.0.0',
     lastUpdated: '9/5/2025',
     databaseStatus: 'Disconnected',
-    apiStatus: '------',
+    apiStatus: '------'
   };
 }
 
@@ -266,7 +260,7 @@ export async function getAssetTypes() {
     'Vehicle',
     'Medical',
     'Equipment',
-    'Food',
+    'Food'
   ];
 }
 
@@ -285,9 +279,7 @@ export async function saveBases(bases) {
   return bases;
 }
 
-
 // User Profile API
-
 const STORAGE_PROFILE_KEY = "userProfileData";
 
 export async function getUserProfile() {
@@ -305,3 +297,46 @@ export async function updateUserProfile(profile) {
   localStorage.setItem(STORAGE_PROFILE_KEY, JSON.stringify(profile));
   return profile;
 }
+
+
+// Notifications API
+const STORAGE_NOTIFICATIONS_KEY = "notificationsData";
+
+export async function getNotifications() {
+  const data = localStorage.getItem(STORAGE_NOTIFICATIONS_KEY);
+  const notifications = data ? JSON.parse(data) : [];
+
+  const now = Date.now();
+  const filtered = notifications.filter(n => now - new Date(n.date).getTime() <= 60000); 
+  localStorage.setItem(STORAGE_NOTIFICATIONS_KEY, JSON.stringify(filtered));
+
+  return filtered;
+}
+
+export async function createNotification(notification) {
+  const notifications = await getNotifications();
+  const newNotification = {
+    id: Date.now(),
+    ...notification,
+    date: new Date().toISOString()
+  };
+  notifications.unshift(newNotification);
+  localStorage.setItem(STORAGE_NOTIFICATIONS_KEY, JSON.stringify(notifications));
+  return newNotification;
+}
+
+export async function deleteNotification(id) {
+  const notifications = await getNotifications();
+  const filtered = notifications.filter(n => String(n.id) !== String(id));
+  localStorage.setItem(STORAGE_NOTIFICATIONS_KEY, JSON.stringify(filtered));
+  return true;
+}
+
+export async function clearNotifications() {
+  localStorage.removeItem(STORAGE_NOTIFICATIONS_KEY);
+  return true;
+}
+
+setInterval(() => {
+  getNotifications(); 
+}, 60000);
